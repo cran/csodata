@@ -1,0 +1,184 @@
+#' Return geographic data as a sf data frame
+#'
+#' Retrieves an ESRI shapefile of vector data for Ireland from the cso website
+#' \href{https://www.cso.ie/en/census/census2011boundaryfiles/}{cso.ie} and
+#' returns it as an sf data frame. The data is returned as a zip file, which is
+#' downloaded to and unzipped in a temporary directory.
+#'
+#' The map data is from the 2011 census, and is 20m generalised, which offers a
+#' good balance of fidelity and low file size. More datasets, as well as
+#' 50m generalised, 100m generalised and ungeneralised versions of the map
+#' files can also be found on the OSi (Ordnance Survey Ireland) website at
+#' \url{https://data-osi.opendata.arcgis.com/search?tags=boundaries}.
+#'
+#' @param map_data string. Indicates which shapefile to download. Options are:
+#' \itemize{
+#'   \item "Provinces" OR "p",
+#'   \item "NUTS2",
+#'   \item "NUTS3",
+#'   \item "Administrative Counties" OR "admin_counties" OR "ac",
+#'   \item "Electoral Divisions" OR "elec_div" OR "ed",
+#'   \item "Small Areas" OR "sa" and
+#'   \item "Gaeltacht" OR "g".
+#' }
+#' @param cache logical. Indicates whether to cache the result using R.cache.
+#' TRUE by default.
+#' @return data frame of the requested CSO table.
+#' @export
+#' @examples
+#' \dontrun{
+#' shp <- cso_get_geo("NUTS2")
+#' }
+cso_get_geo <- function(map_data, cache = TRUE) {
+  dl_path <- "http://census.cso.ie/censusasp/saps/boundaries/"
+  # Set shapefile name ------------------
+  fname <- dplyr::case_when(
+    map_data == "Provinces" || map_data == "p" ~
+    "Census2011_Province_generalised20m",
+    map_data == "NUTS2" ~ "Census2011_NUTS2_generalised20m",
+    map_data == "NUTS3" ~ "Census2011_NUTS3_generalised20m",
+    map_data == "Administrative Counties" ||
+      map_data == "admin_counties" || map_data == "ac" ~
+    "Census2011_Admin_Counties_generalised20m",
+    map_data == "Electoral Divisions" ||
+      map_data == "elec_div" || map_data == "ed" ~
+    "Census2011_Electoral_Divisions_generalised20m",
+    map_data == "Small Areas" || map_data == "sa" ~
+    "Census2011_Small_Areas_generalised20m",
+    map_data == "Gaeltacht" || map_data == "g" ~
+    "Census2011_Gaeltacht",
+    TRUE ~ NA_character_
+  )
+
+  # Need to separate error check. Including it in case_when causes error ---
+  if (is.na(fname)) {
+    stop("Not one of the available map files.")
+  }
+
+  url <- paste0(dl_path, fname, ".zip")
+
+  # Retreive cached data ----------------
+  if (cache) {
+    data <- R.cache::loadCache(list(fname), dirs = "csodata/geodata")
+    if (!is.null(data)) {
+      message("Loaded cached data\n")
+      return(data)
+    }
+  }
+
+  # No caching, or cache empty ----------
+  tmpdir <- tempdir()
+  filepath <- paste0(tmpdir, "/", fname, ".zip")
+  utils::download.file(url, filepath)
+  utils::unzip(filepath, exdir = tmpdir)
+  shape_file <- paste0(tmpdir, "/", fname, ".shp")
+  shp <- sf::st_read(shape_file, stringsAsFactors = F)
+
+  if (cache) {
+    R.cache::saveCache(shp, key = list(fname), dirs = "csodata/geodata")
+  }
+  return(shp)
+}
+
+
+#' Returns a data frame with the metadata of a vector shapefile
+#'
+#' Takes the output from \code{\link{cso_get_geo}} or otherwise and returns
+#' information about it in a data frame.
+#'
+#' @param shp sf data.frame. Geographic data stored as an sf object.
+#' @return list with eight elements:
+#' \itemize{
+#'   \item The coordinate reference system, itself a list with two elements,
+#'   the EPSG code (if any, NA value if none), and the proj4string
+#'   \item The number of polygons in the data
+#'   \item If all the polygons are simple (not self-intersecting)
+#'   \item If any polygons are empty
+#'   \item If all of the polygons are valid
+#'   \item The average area of the polygons, including units
+#' }
+#' @export
+#' @examples
+#' \dontrun{
+#' shp_meta <- cso_get_geo_meta(shp)
+#' }
+cso_get_geo_meta <- function(shp) {
+  crs <- sf::st_crs(shp)
+  poly <- length(sf::st_dimension(shp))
+
+  simp <- all(sf::st_is_simple(shp))
+  empt <- any(sf::st_is_empty(shp))
+  valid <- all(sf::st_is_valid(shp))
+  avg_area <- mean(sf::st_area(shp))
+
+  list(
+    coordinate_reference_system = crs, polygons = poly, all_simple = simp,
+    any_empty = empt, all_valid = valid, average_area = avg_area
+  )
+}
+
+
+#' Prints metadata from an ESRI shapefile to console
+#'
+#' Takes the output from \code{\link{cso_get_geo}} or otherwise and prints
+#' information about it to the console as formatted text.
+#'
+#' @param shp sf data.frame. Geographic data stored as an sf object.
+#' StatBank.
+#' @export
+#' @examples
+#' \dontrun{
+#' cso_disp_geo_meta(shp)
+#' }
+cso_disp_geo_meta <- function(shp) {
+  contents <- setdiff(names(shp), "geometry")
+  shp_meta <- cso_get_geo_meta(shp)
+  date_range <- range(as.POSIXlt(shp$CREATEDATE,
+                                 format = "%d-%m-%Y", tz = "GMT"))
+
+  message("*** GEOGRAPHIC METADATA ***")
+  print(sf::st_crs(shp))
+  message("\nPolygons = ", shp_meta$polygons, "\n")
+  message("All polygons are simple? = ", shp_meta$all_simple, "\n")
+  message("Any polygons is empty? = ", shp_meta$any_empty, "\n")
+  message("All polygons are valid? = ", shp_meta$all_valid, "\n")
+  message("Creation date range = ", as.character(date_range[[1]]), "--",
+      as.character(date_range[[2]]), "\n")
+  message("Average polygon area = ")
+  print(shp_meta$average_area)
+  message("\n*** ADDITIONAL DATA INCLUDED ***")
+
+  geoid <- c("NUTS1", "NUTS1NAME", "NUTS2", "NUTS2NAME", "NUTS3", "NUTS3NAME",
+             "COUNTY", "COUNTYNAME", "GEOGID", "CSOED", "OSIED", "EDNAME",
+             "GAELTACHT", "NAME", "PROVINCE", "PROVNAME", "SMALL_AREA")
+
+  geoident <- contents[contents %in% geoid]
+
+  message("\nGeographic identifiers:")
+  print(geoident)
+
+  pop <- contents[contents %in% c("MALE2011", "FEMALE2011", "TOTAL2011",
+                                  "Male2011", "Female2011", "Total2011")]
+  message("\nPopulation (Male, Female, Total):")
+  print(pop)
+
+  hs <- c("PPOCC2011", "UNOCC2011", "VACANT2011", "HS2011", "PCVAC20111",
+          "PCVAC2011", "PPOcc2011", "Unocc2011", "Vacant2011", "PCVac2011")
+
+  house <- contents[contents %in% hs]
+  message("\nHousing figures:")
+  print(house)
+
+  area <- contents[contents %in% c("LAND_AREA", "TOTAL_AREA")]
+  message("\nArea figures:")
+  print(area)
+
+  message("\nCreation/modification date:")
+  print("CREATEDATE")
+
+  other <- contents[!contents %in% c(geoident, pop, house, area, "CREATEDATE")]
+  if (length(other) > 0) {
+    message("Other data: \n")
+    print(other)
+  }
+}
