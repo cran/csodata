@@ -12,6 +12,8 @@
 #'
 #' @param cache logical. If TRUE (default) the table of contents is cached
 #' with the system date as a key.
+#' @param suppress_messages logical. If FALSE (default) a message is printed
+#' when loading a previously cached table of contents.
 #' @return data frame of three character columns:
 #' \itemize{
 #'   \item id. Contains all of the table codes currently
@@ -24,7 +26,7 @@
 #' @export
 #' @examples
 #' head(cso_get_toc())
-cso_get_toc <- function(cache = TRUE) {
+cso_get_toc <- function(cache = TRUE, suppress_messages = FALSE) {
   url <- paste0(
     "https://statbank.cso.ie/StatbankServices/",
     "StatbankServices.svc/jsonservice/TitledetailsList"
@@ -33,7 +35,9 @@ cso_get_toc <- function(cache = TRUE) {
   if (cache) {
     data <- R.cache::loadCache(list("cso_toc", Sys.Date()), dirs = "csodata")
     if (!is.null(data)) {
-      message("Loaded cached toc\n")
+      if (!suppress_messages) {
+        message("Loaded cached toc\n")
+      }
       return(data)
     } else {
       tbl <- data.frame(jsonlite::fromJSON(url))
@@ -76,7 +80,7 @@ cso_get_toc <- function(cache = TRUE) {
 #' @export
 #' @examples
 #' trv <- cso_search_toc("travel")
-cso_search_toc <- function(string, toc = cso_get_toc()) {
+cso_search_toc <- function(string, toc = cso_get_toc(suppress_messages = TRUE)) {
   # Search string -----------------------
   pattern <- toupper(string)
   x <- toupper(toc$title)

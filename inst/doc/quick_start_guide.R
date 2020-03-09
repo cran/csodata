@@ -22,7 +22,7 @@ meta1 <- cso_get_meta("CDP06")
 cso_disp_meta("CDP06")
 
 ## -----------------------------------------------------------------------------
-shp <- cso_get_geo("NUTS3")
+shp <- cso_get_geo("NUTS3_2011")
 
 ## ---- fig.width = 5, fig.height=6---------------------------------------------
 # install.packages("tmap")

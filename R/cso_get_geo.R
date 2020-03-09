@@ -11,16 +11,25 @@
 #' files can also be found on the OSi (Ordnance Survey Ireland) website at
 #' \url{https://data-osi.opendata.arcgis.com/search?tags=boundaries}.
 #'
+#' The NUTS2 and NUTS3 map files are the updated versions for 2016, including
+#' three NUTS2 regions and the movement of Louth and South Tipperary into new
+#' NUTS3 regions. These files are downloaded directly from the OSi website, as
+#' they are not available on the CSO website, and do not contain the population
+#' and housing data contained in the map files from the CSO website.
+#'
 #' @param map_data string. Indicates which shapefile to download. Options are:
 #' \itemize{
 #'   \item "Provinces" OR "p",
 #'   \item "NUTS2",
 #'   \item "NUTS3",
+#'   \item "NUTS2_2011",
+#'   \item "NUTS3_2011",
 #'   \item "Administrative Counties" OR "admin_counties" OR "ac",
 #'   \item "Electoral Divisions" OR "elec_div" OR "ed",
 #'   \item "Small Areas" OR "sa" and
 #'   \item "Gaeltacht" OR "g".
 #' }
+#' Until v0.1.5 "NUTS2" and "NUTS3" gave access to the 2011 dataset.
 #' @param cache logical. Indicates whether to cache the result using R.cache.
 #' TRUE by default.
 #' @return data frame of the requested CSO table.
@@ -35,8 +44,10 @@ cso_get_geo <- function(map_data, cache = TRUE) {
   fname <- dplyr::case_when(
     map_data == "Provinces" || map_data == "p" ~
     "Census2011_Province_generalised20m",
-    map_data == "NUTS2" ~ "Census2011_NUTS2_generalised20m",
-    map_data == "NUTS3" ~ "Census2011_NUTS3_generalised20m",
+    map_data == "NUTS2" ~ "NUTS2_Boundaries_Generalised_20m__OSi_National_Statistical_Boundaries__2015",
+    map_data == "NUTS3" ~ "NUTS3_Boundaries_Generalised_20m__OSi_National_Statistical_Boundaries__2015",
+    map_data == "NUTS2_2011" ~ "Census2011_NUTS2_generalised20m",
+    map_data == "NUTS3_2011" ~ "Census2011_NUTS3_generalised20m",
     map_data == "Administrative Counties" ||
       map_data == "admin_counties" || map_data == "ac" ~
     "Census2011_Admin_Counties_generalised20m",
@@ -55,7 +66,13 @@ cso_get_geo <- function(map_data, cache = TRUE) {
     stop("Not one of the available map files.")
   }
 
-  url <- paste0(dl_path, fname, ".zip")
+  if (map_data == "NUTS2") {
+    url <- "https://opendata.arcgis.com/datasets/62e0cf326bab442897944e4dc4999c16_2.zip"
+  } else if (map_data == "NUTS3") {
+    url <- "https://opendata.arcgis.com/datasets/1a5d91a11ad9454d865ad426bbf5bc37_2.zip"
+  } else {
+    url <- paste0(dl_path, fname, ".zip")
+  }
 
   # Retreive cached data ----------------
   if (cache) {
@@ -73,6 +90,13 @@ cso_get_geo <- function(map_data, cache = TRUE) {
   utils::unzip(filepath, exdir = tmpdir)
   shape_file <- paste0(tmpdir, "/", fname, ".shp")
   shp <- sf::st_read(shape_file, stringsAsFactors = F)
+
+
+  if (map_data == "NUTS2" | map_data == "NUTS3") {
+    # Transform OSi maps to use Irish grid projection, like CSO maps
+    ire_proj = "+proj=tmerc +lat_0=53.5 +lon_0=-8 +k=1.000035 +x_0=200000 +y_0=250000 +datum=ire65 +units=m +no_defs"
+    shp <- sf::st_transform(shp, ire_proj)
+  }
 
   if (cache) {
     R.cache::saveCache(shp, key = list(fname), dirs = "csodata/geodata")

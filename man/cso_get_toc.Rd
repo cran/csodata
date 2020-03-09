@@ -5,11 +5,14 @@
 \title{Returns a data frame with all valid CSO Statbank tables listed sequentially
 by id number, e.g. A0101, A0102, A0103, etc.}
 \usage{
-cso_get_toc(cache = TRUE)
+cso_get_toc(cache = TRUE, suppress_messages = FALSE)
 }
 \arguments{
 \item{cache}{logical. If TRUE (default) the table of contents is cached
 with the system date as a key.}
+
+\item{suppress_messages}{logical. If FALSE (default) a message is printed
+when loading a previously cached table of contents.}
 }
 \value{
 data frame of three character columns:

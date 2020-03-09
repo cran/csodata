@@ -51,10 +51,10 @@ cso_disp_meta("CDP06")
 
 #### Geographic Data
 
-Geographic vector data in ESRI shapefile format can be downloaded for use in mapping.
+Geographic vector data in ESRI shapefile format can be downloaded for use in mapping. This uses the older 2011 data, which includes demographic information. Newer maps, including the revisions to the NUTS regions made in 2016, is also available.
 
 ```{r}
-shp <- cso_get_geo("NUTS3")
+shp <- cso_get_geo("NUTS3_2011")
 ```
 
 This data can be plotted using the `tmap` package. Here we plot the 2011 population, which is included as the "TOTAL2011" column in the map data.

@@ -35,7 +35,7 @@ cso_get_meta <- function(table_code, cache_data = TRUE, cache_toc = TRUE) {
   response_fj <- jsonlite::fromJSON(tbl)
 
   stats <- cso_get_content(table_code)
-  cso_toc <- cso_get_toc(cache_toc)
+  cso_toc <- cso_get_toc(cache_toc, suppress_messages = TRUE)
 
   title <- response_fj$dataset$label
   source <- response_fj$dataset$source

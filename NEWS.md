@@ -3,13 +3,28 @@ csodata
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2019-12-13 14:45:27
+    #> Last Update: 2020-03-04 14:36:28
 
 # Planned Updates
 
-  - None
+  - Add support for new API to be introduced when upgrade occurs from
+    StatBank to Px-Stat.
 
 # Version History
+
+## v1.0.0
+
+  - Major increment to version number to reflect release on CRAN.
+  - Changed maintainer to Conor Crowley.
+  - Added suppress\_messages option to cso\_get\_toc and
+    cso\_download\_tbl.
+  - Caching of data now uses the LastModified field from the table of
+    contents as part of the key so that a new version is only retrieved
+    when the table is updated. Due to this all users should clear the
+    cache with cso\_clear\_cache() or otherwise.
+  - Added two new options to cso\_get\_geo for updated NUTS shapefiles
+    from the OSi website.
+  - Changed projection of new map files to Irish Grid system.
 
 ## v0.1.5
 

@@ -12,11 +12,14 @@ cso_get_geo(map_data, cache = TRUE)
   \item "Provinces" OR "p",
   \item "NUTS2",
   \item "NUTS3",
+  \item "NUTS2_2011",
+  \item "NUTS3_2011",
   \item "Administrative Counties" OR "admin_counties" OR "ac",
   \item "Electoral Divisions" OR "elec_div" OR "ed",
   \item "Small Areas" OR "sa" and
   \item "Gaeltacht" OR "g".
-}}
+}
+Until v0.1.5 "NUTS2" and "NUTS3" gave access to the 2011 dataset.}
 
 \item{cache}{logical. Indicates whether to cache the result using R.cache.
 TRUE by default.}
@@ -36,6 +39,12 @@ good balance of fidelity and low file size. More datasets, as well as
 50m generalised, 100m generalised and ungeneralised versions of the map
 files can also be found on the OSi (Ordnance Survey Ireland) website at
 \url{https://data-osi.opendata.arcgis.com/search?tags=boundaries}.
+
+The NUTS2 and NUTS3 map files are the updated versions for 2016, including
+three NUTS2 regions and the movement of Louth and South Tipperary into new
+NUTS3 regions. These files are downloaded directly from the OSi website, as
+they are not available on the CSO website, and do not contain the population
+and housing data contained in the map files from the CSO website.
 }
 \examples{
 \dontrun{

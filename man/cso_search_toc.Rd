@@ -4,7 +4,7 @@
 \alias{cso_search_toc}
 \title{Search list of all table descriptions for given string}
 \usage{
-cso_search_toc(string, toc = cso_get_toc())
+cso_search_toc(string, toc = cso_get_toc(suppress_messages = TRUE))
 }
 \arguments{
 \item{string}{string. The text to search for. Case insensitive.}

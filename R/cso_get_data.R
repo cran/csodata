@@ -127,9 +127,12 @@ cso_get_data <- function(table_code, wide_format = "wide", include_ids = TRUE,
 #'
 #' @param table_code string. The code uniquely identifying one table.
 #' @param cache logical. Indicates whether to cache the result using R.cache.
+#' @param suppress_messages logical. If FALSE (default) a message is printed
+#' when loading a previously cached data table.
 #' @return a character object, containing the data in JSON-stat format.
 #' @noRd
-cso_download_tbl <- function(table_code, cache = TRUE) {
+cso_download_tbl <- function(table_code, cache = TRUE,
+                             suppress_messages = FALSE) {
   url <- paste0(
     "https://statbank.cso.ie/StatbankServices/StatbankServices",
     ".svc/jsonservice/responseinstance/", table_code
@@ -137,9 +140,13 @@ cso_download_tbl <- function(table_code, cache = TRUE) {
 
   # Attempt to retrieve cached data -----
   if (cache) {
-    data <- R.cache::loadCache(list(table_code, Sys.Date()), dirs = "csodata")
+    toc <- cso_get_toc(suppress_messages = TRUE)
+    last_update <- toc[toc$id == table_code, 2]
+    data <- R.cache::loadCache(list(table_code, last_update), dirs = "csodata")
     if (!is.null(data)) {
-      message("Loaded cached data\n")
+      if (!suppress_messages) {
+        message("Loaded cached data\n")
+      }
       return(data)
     }
   }
@@ -152,8 +159,10 @@ cso_download_tbl <- function(table_code, cache = TRUE) {
       charToRaw("invalid Maintable format entered"))) {
     json_data <- rawToChar(response[["content"]])
     if (cache) {
+      toc <- cso_get_toc(suppress_messages = TRUE)
+      last_update <- toc[toc$id == table_code, 2]
       R.cache::saveCache(json_data,
-        key = list(table_code, Sys.Date()), dirs = "csodata"
+        key = list(table_code, last_update), dirs = "csodata"
       )
     }
     return(json_data)
