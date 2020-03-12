@@ -1,8 +1,8 @@
 Package: csodata
 Type: Package
 Title: Download Data from the CSO 'StatBank' API
-Version: 1.0.0.1
-Date: 2020-03-09
+Version: 1.0.1.1
+Date: 2020-03-11
 Authors@R: c(
     person("Eoin", "Horgan", email = "eoin.horgan@cso.ie", role = "aut", comment = c(ORCID = "0000-0002-3446-6154")),
 	person("Conor", "Crowley", email = "conor.crowley@cso.ie", role = c("aut", "cre")),
@@ -28,9 +28,9 @@ RoxygenNote: 7.0.2
 Suggests: knitr, rmarkdown, tmap, viridisLite
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2020-03-09 08:43:38 UTC; horgane
+Packaged: 2020-03-11 12:07:49 UTC; horgane
 Author: Eoin Horgan [aut] (<https://orcid.org/0000-0002-3446-6154>),
   Conor Crowley [aut, cre],
   Mervyn O'Luing [aut]
 Repository: CRAN
-Date/Publication: 2020-03-09 15:40:02 UTC
+Date/Publication: 2020-03-12 13:30:02 UTC

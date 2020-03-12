@@ -25,5 +25,7 @@ displaying the intervals at which the data included in the table was
 gathered/calculated.
 }
 \examples{
+\dontrun{
 cso_get_interval("C0636")
+}
 }

@@ -51,6 +51,10 @@ cso_get_data <- function(table_code, wide_format = "wide", include_ids = TRUE,
     }
   } else {
     json_data <- cso_download_tbl(table_code, cache = cache)
+    # Error Checking ----------------------
+    if (is.null(json_data)) {
+      return(NULL)
+    }
   }
 
   # Load data ---------------------------
@@ -152,7 +156,22 @@ cso_download_tbl <- function(table_code, cache = TRUE,
   }
 
   # No caching, or cache empty ----------
-  response <- httr::GET(url)
+
+  # Check for errors using trycatch since StatBank API does not support
+  # html head requests.
+  error_message =  paste0("Failed retrieving table. Please check internet ",
+                          "connection and that statbank.cso.ie is online")
+
+  response <- tryCatch({
+    httr::GET(url)
+  }, warning = function(w) {
+    print(paste0("Warning: ", error_message))
+    return(NULL)
+  }, error = function(e) {
+    print(paste0("Error: ", error_message))
+    return(NULL)
+  })
+
   # Check if data valid -------------
   if (httr::status_code(response) == 200 &&
     !all(response[["content"]][1:32] ==

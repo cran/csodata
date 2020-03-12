@@ -40,7 +40,21 @@ cso_get_toc <- function(cache = TRUE, suppress_messages = FALSE) {
       }
       return(data)
     } else {
-      tbl <- data.frame(jsonlite::fromJSON(url))
+      # Check for errors using trycatch since StatBank API does not support
+      # html head requests.
+      error_message =  paste0("Failed retrieving table of contents. Please ",
+              "check internet connection and that statbank.cso.ie is online")
+
+      tbl <- tryCatch({
+        data.frame(jsonlite::fromJSON(url))
+      }, warning = function(w) {
+        print(paste0("Warning: ", error_message))
+        return(NULL)
+      }, error = function(e) {
+        print(paste0("Error: ", error_message))
+        return(NULL)
+      })
+
 
       tbl2 <- tbl[c("id", "LastModified", "title")]
       tbl3 <- dplyr::mutate_if(tbl2, is.factor, as.character)
@@ -81,6 +95,11 @@ cso_get_toc <- function(cache = TRUE, suppress_messages = FALSE) {
 #' @examples
 #' trv <- cso_search_toc("travel")
 cso_search_toc <- function(string, toc = cso_get_toc(suppress_messages = TRUE)) {
+  # Error Checking ----------------------
+  if (is.null(toc)) {
+    return(NULL)
+  }
+
   # Search string -----------------------
   pattern <- toupper(string)
   x <- toupper(toc$title)

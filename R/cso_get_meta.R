@@ -32,6 +32,11 @@
 cso_get_meta <- function(table_code, cache_data = TRUE, cache_toc = TRUE) {
   # Use fromJSON in order to preserve metadata ---
   tbl <- cso_download_tbl(table_code, cache_data)
+  # Error Checking ----------------------
+  if (is.null(tbl)) {
+    return(NULL)
+  }
+
   response_fj <- jsonlite::fromJSON(tbl)
 
   stats <- cso_get_content(table_code)
@@ -72,6 +77,11 @@ cso_get_meta <- function(table_code, cache_data = TRUE, cache_toc = TRUE) {
 #' cso_get_vars("IPA03")
 cso_get_vars <- function(table_code, cache_data = TRUE) {
   tbl <- cso_download_tbl(table_code, cache_data)
+  # Error Checking ----------------------
+  if (is.null(tbl)) {
+    return(NULL)
+  }
+
   response_fj <- jsonlite::fromJSON(tbl)
   response_fj$dataset$dimension$id
 }
@@ -95,6 +105,11 @@ cso_get_vars <- function(table_code, cache_data = TRUE) {
 cso_get_var_values <- function(table_code, cache_data = TRUE) {
 
   tbl <- cso_download_tbl(table_code, cache_data)
+  # Error Checking ----------------------
+  if (is.null(tbl)) {
+    return(NULL)
+  }
+
   response_fj <- jsonlite::fromJSON(tbl)
   vars <- response_fj$dataset$dimension$id
 
@@ -127,9 +142,16 @@ cso_get_var_values <- function(table_code, cache_data = TRUE) {
 #' table, with one element for each statistic.
 #' @export
 #' @examples
+#' \dontrun{
 #' cso_get_interval("C0636")
+#' }
 cso_get_interval <- function(table_code, cache_data = TRUE) {
   tbl <- cso_download_tbl(table_code, cache_data)
+  # Error Checking ----------------------
+  if (is.null(tbl)) {
+    return(NULL)
+  }
+
   response_fj <- jsonlite::fromJSON(tbl)
 
   if (!is.null(response_fj$dataset$dimension$role$time)) {
@@ -163,7 +185,21 @@ cso_get_content <- function(table_code) {
     ".svc/jsonservice/ContentsIndicatorsList/", table_code
   )
 
-  cont_list <- data.frame(jsonlite::fromJSON(url))
+  # Check for errors using trycatch since StatBank API does not support
+  # html head requests.
+  error_message =  paste0("Failed retrieving list of contents. Please ",
+          "check internet connection and that statbank.cso.ie is online")
+
+  cont_list <- tryCatch({
+    data.frame(jsonlite::fromJSON(url))
+  }, warning = function(w) {
+    print(paste0("Warning: ", error_message))
+    return(NULL)
+  }, error = function(e) {
+    print(paste0("Error: ", error_message))
+    return(NULL)
+  })
+
   as.character(cont_list$ContentsIndicatorvalue)
 }
 
@@ -177,9 +213,16 @@ cso_get_content <- function(table_code) {
 #' StatBank.
 #' @export
 #' @examples
+#' \dontrun{
 #' cso_disp_meta("EP001")
+#' }
 cso_disp_meta <- function(table_code) {
   meta <- cso_get_meta(table_code)
+
+  # Error Checking ----------------------
+  if (is.null(meta)) {
+    return(NULL)
+  }
 
   message("*** METADATA ***\n")
   message("CSO Table = ", meta$Title, "\n")

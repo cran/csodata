@@ -86,7 +86,16 @@ cso_get_geo <- function(map_data, cache = TRUE) {
   # No caching, or cache empty ----------
   tmpdir <- tempdir()
   filepath <- paste0(tmpdir, "/", fname, ".zip")
-  utils::download.file(url, filepath)
+
+  error_message =  paste0("Failed retrieving map data. Please check internet",
+            " connection and that cso.ie and opendata.arcgis.com are online")
+  if (httr::http_error(url)) {
+    print(paste0("Error: ", error_message))
+    return(NULL)
+  } else {
+    utils::download.file(url, filepath)
+  }
+
   utils::unzip(filepath, exdir = tmpdir)
   shape_file <- paste0(tmpdir, "/", fname, ".shp")
   shp <- sf::st_read(shape_file, stringsAsFactors = F)

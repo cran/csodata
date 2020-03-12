@@ -15,5 +15,7 @@ Takes the output from \code{\link{cso_get_meta}} and prints it to the
 console as formatted text.
 }
 \examples{
+\dontrun{
 cso_disp_meta("EP001")
+}
 }

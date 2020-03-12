@@ -3,7 +3,7 @@ csodata
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2020-03-04 14:36:28
+    #> Last Update: 2020-03-11 11:34:03
 
 # Planned Updates
 
@@ -11,6 +11,11 @@ csodata
     StatBank to Px-Stat.
 
 # Version History
+
+## v1.0.1
+
+  - Added graceful failure when internet resources not available, in
+    accordance with CRAN policies.
 
 ## v1.0.0
 
