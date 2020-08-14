@@ -4,14 +4,8 @@
 \alias{cso_get_data}
 \title{Return a CSO table as a data frame}
 \usage{
-cso_get_data(
-  table_code,
-  wide_format = "wide",
-  include_ids = TRUE,
-  id_list = NULL,
-  use_factors = TRUE,
-  cache = TRUE
-)
+cso_get_data(table_code, wide_format = "wide", include_ids = TRUE,
+  id_list = NULL, use_factors = TRUE, cache = TRUE)
 }
 \arguments{
 \item{table_code}{string. If the table_code is a filename or a path to a

@@ -3,6 +3,7 @@
 \docType{package}
 \name{csodata}
 \alias{csodata}
+\alias{csodata-package}
 \title{csodata: A package for downloading CSO data.}
 \description{
 The csodata package allows for easily downloading CSO (Central Statistics

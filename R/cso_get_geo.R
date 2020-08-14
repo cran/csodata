@@ -97,7 +97,14 @@ cso_get_geo <- function(map_data, cache = TRUE) {
   }
 
   utils::unzip(filepath, exdir = tmpdir)
-  shape_file <- paste0(tmpdir, "/", fname, ".shp")
+  if (map_data == "NUTS2") {
+    shape_file <- paste0(tmpdir, "/", "c2f2dbb3-289e-45cc-ae79-791cbc9339632020330-1-1uh3380.g89t.shp")
+  } else if ( map_data == "NUTS3"){
+    shape_file <- paste0(tmpdir, "/", "527c3332-32cc-44cd-baa3-267a0e917b5a2020328-1-1cpklcw.flb0h.shp")
+  } else{
+    shape_file <- paste0(tmpdir, "/", fname, ".shp")
+  }
+  
   shp <- sf::st_read(shape_file, stringsAsFactors = F)
 
 

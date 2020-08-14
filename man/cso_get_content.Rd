@@ -22,5 +22,7 @@ jsonservice/help/operations/ContentsIndicatorsList}
 for more information on this.
 }
 \examples{
+\dontrun{
 cso_get_content("EP008")
+}
 }

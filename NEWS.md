@@ -12,6 +12,10 @@ csodata
 
 # Version History
 
+## v1.0.2
+
+  - Fixed a bug in cso\_get\_geo.
+
 ## v1.0.1
 
   - Added graceful failure when internet resources not available, in
