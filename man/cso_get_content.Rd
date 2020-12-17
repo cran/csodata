@@ -4,25 +4,21 @@
 \alias{cso_get_content}
 \title{Returns a character vector listing the statistics in a CSO data table}
 \usage{
-cso_get_content(table_code)
+cso_get_content(table_code, cache_data = TRUE)
 }
 \arguments{
-\item{table_code}{string. A valid code for one table from the
-StatBank.}
+\item{table_code}{string. A valid code for a table on data.cso.ie .}
+
+\item{cache_data}{logical. Whether to use cached data, if available.
+Default value is TRUE.}
 }
 \value{
 character vector. The names of the statistics included in the
 table, with one element for each statistic.
 }
 \description{
-Uses the ContentsIndicatorsList service of the CSO Statbank API to
-returns a list the contained statistics for a table.
-See \url{https://statbank.cso.ie/StatbankServices/StatbankServices.svc/
-jsonservice/help/operations/ContentsIndicatorsList}
-for more information on this.
+Returns a character vector listing the statistics in a CSO data table
 }
 \examples{
-\dontrun{
 cso_get_content("EP008")
-}
 }

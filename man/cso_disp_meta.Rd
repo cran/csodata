@@ -2,13 +2,12 @@
 % Please edit documentation in R/cso_get_meta.R
 \name{cso_disp_meta}
 \alias{cso_disp_meta}
-\title{Prints metadata from a StatBank table to the console}
+\title{Prints metadata from a PxStat table to the console}
 \usage{
 cso_disp_meta(table_code)
 }
 \arguments{
-\item{table_code}{string. A valid code for one table from the
-StatBank.}
+\item{table_code}{string. A valid code for a table on data.cso.ie .}
 }
 \description{
 Takes the output from \code{\link{cso_get_meta}} and prints it to the

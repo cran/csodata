@@ -7,8 +7,7 @@
 cso_get_vars(table_code, cache_data = TRUE)
 }
 \arguments{
-\item{table_code}{string. A valid code for one table from the
-StatBank.}
+\item{table_code}{string. A valid code for a table on data.cso.ie .}
 
 \item{cache_data}{logical. Whether to use cached data, if available.
 Default value is TRUE. Strongly recommended to use caching, as otherwise
@@ -17,7 +16,7 @@ metadata.}
 }
 \value{
 character vector. The names of the statistics included in the
-table, with one element for each statistic.
+table.
 }
 \description{
 Reads the metadata of a table to return a character vector of the

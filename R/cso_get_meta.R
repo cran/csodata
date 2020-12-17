@@ -1,27 +1,24 @@
 #' Returns a data frame with the metadata of a CSO data table
 #'
-#' Checks the CSO Statbank API for a metadata on a dataset and returns it as a
+#' Checks the CSO PxStat API for a metadata on a dataset and returns it as a
 #' list of metadata and contained statistics.
 #'
-#' The statistics are pulled using the \code{\link{cso_get_content}} function.
 #'
-#' @param table_code string. A valid code for a table from the StatBank.
+#' @param table_code string. A valid code for a table on data.cso.ie .
 #' @param cache_data logical. Whether to use cached data, if available.
 #' Default value is TRUE.
-#' @param cache_toc logical. Whether to use cached table of contents, if
-#' available. Default value is TRUE.
 #' @return list with eight elements:
 #' \itemize{
 #'   \item The title of the table.
-#'   \item The source of the data.
-#'   \item The date when the data was retrieved from StatBank.
-#'   \item The time interval used in the data. (Census year, Quarter, Month)
 #'   \item The units used (the R class of the value column)
+#'   \item The Copyright on the data.
+#'   \item The time interval used in the data. (Census year, Quarter, Month)
 #'   \item The date the table was last modified.
 #'   \item The names of the variables included in the table, returned as a
 #'   character vector with one element for each variable.
 #'   \item The names of the statistics included in the table, returned as a
 #'   character vector with one element for each statistic.
+#'   \item An indicator if the statistics are experimental
 #' }
 #' @export
 #' @examples
@@ -29,32 +26,32 @@
 #' head(cso_get_meta("VSA16"))
 #' meta1 <- cso_get_meta("HS014")
 #' }
-cso_get_meta <- function(table_code, cache_data = TRUE, cache_toc = TRUE) {
+cso_get_meta <- function(table_code, cache_data = TRUE) {
   # Use fromJSON in order to preserve metadata ---
   tbl <- cso_download_tbl(table_code, cache_data)
   # Error Checking ----------------------
   if (is.null(tbl)) {
     return(NULL)
   }
-
+  
   response_fj <- jsonlite::fromJSON(tbl)
-
-  stats <- cso_get_content(table_code)
-  cso_toc <- cso_get_toc(cache_toc, suppress_messages = TRUE)
-
-  title <- response_fj$dataset$label
-  source <- response_fj$dataset$source
-  date_downloaded <- response_fj$dataset$updated
-  time_period <- response_fj$dataset$dimension$role$time
-  units <- class(response_fj$dataset$value)
-  date_modified <- cso_toc$LastModified[which(cso_toc$id == table_code)]
-  vars <- setdiff(response_fj$dataset$dimension$id, "Statistic")
-
+  title <- response_fj$label
+  
+  time_period <- response_fj$dimension[[2]]$label 
+  units <- response_fj$dimension$STATISTIC$category$unit[[1]]$label
+  date_modified <- response_fj$updated
+  vars <- setdiff(names(rjstat::fromJSONstat(tbl,naming = "label", use_factors = TRUE)), c("Statistic","value"))
+  stat <- as.character(response_fj$dimension$STATISTIC$category$label)
+  
+  copyright <- response_fj$extension$copyright$name
+  experimental <- response_fj$extension$experimental
+  
   list(
-    Title = title, Source = source,
-    Date_downloaded_from_StatBank = date_downloaded,
-    Time = time_period, Units = units, Date_last_modified = date_modified,
-    Variables = vars, Statistics = stats
+    Title = title, Time = time_period,
+    Units = units, Date_last_modified = date_modified,
+    Variables = vars, Statistics = stat,
+    Copyright = copyright,
+    Is_Experimental = experimental
   )
 }
 
@@ -64,14 +61,13 @@ cso_get_meta <- function(table_code, cache_data = TRUE, cache_toc = TRUE) {
 #' Reads the metadata of a table to return a character vector of the
 #' included variables in the table.
 #'
-#' @param table_code string. A valid code for one table from the
-#' StatBank.
+#' @param table_code string. A valid code for a table on data.cso.ie .
 #' @param cache_data logical. Whether to use cached data, if available.
 #' Default value is TRUE. Strongly recommended to use caching, as otherwise
 #' the entire table could be downloaded only to access a small part of its
 #' metadata.
 #' @return character vector. The names of the statistics included in the
-#' table, with one element for each statistic.
+#' table.
 #' @export
 #' @examples
 #' cso_get_vars("IPA03")
@@ -81,9 +77,8 @@ cso_get_vars <- function(table_code, cache_data = TRUE) {
   if (is.null(tbl)) {
     return(NULL)
   }
-
-  response_fj <- jsonlite::fromJSON(tbl)
-  response_fj$dataset$dimension$id
+  
+  setdiff(names(rjstat::fromJSONstat(tbl,naming = "label", use_factors = TRUE)), c("Statistic","value"))
 }
 
 
@@ -92,8 +87,7 @@ cso_get_vars <- function(table_code, cache_data = TRUE) {
 #' Reads the table to determine all the unique values taken by the
 #' variables in the table and returns them as a list.
 #'
-#' @param table_code string. A valid code for one table from the
-#' StatBank.
+#' @param table_code string. A valid code for a table on data.cso.ie .
 #' @param cache_data logical. Whether to use cached data, if available.
 #' Default value is TRUE.
 #' @return list. It has length equal to the number of variables in the table,
@@ -103,25 +97,24 @@ cso_get_vars <- function(table_code, cache_data = TRUE) {
 #' @examples
 #' var_val <- cso_get_var_values("IPA03")
 cso_get_var_values <- function(table_code, cache_data = TRUE) {
-
   tbl <- cso_download_tbl(table_code, cache_data)
   # Error Checking ----------------------
   if (is.null(tbl)) {
     return(NULL)
   }
-
+  
   response_fj <- jsonlite::fromJSON(tbl)
-  vars <- response_fj$dataset$dimension$id
-
+  vars <- setdiff(names(rjstat::fromJSONstat(tbl,naming = "id", use_factors = TRUE)), "value")
   len <- length(vars)
   var_vec <- vector(mode = "list", length = len)
-  names(var_vec) <- vars
+  names(var_vec) <- setdiff(names(rjstat::fromJSONstat(tbl,naming = "label", use_factors = TRUE)), "value")
   for (i in 1:len) {
-    string <- paste0("response_fj$dataset$dimension$`",
+    response_fj$dimension
+    string <- paste0("response_fj$dimension$`",
                      vars[i], "`$category$label")
     var_vec[i] <-  list(as.vector(unlist(eval(parse(text = string)))))
   }
-
+  
   return(var_vec)
 }
 
@@ -132,8 +125,7 @@ cso_get_var_values <- function(table_code, cache_data = TRUE) {
 #' displaying the intervals at which the data included in the table was
 #' gathered/calculated.
 #'
-#' @param table_code string. A valid code for one table from the
-#' StatBank.
+#' @param table_code string. A valid code for a table on data.cso.ie .
 #' @param cache_data logical. Whether to use cached data, if available.
 #' Default value is TRUE. Strongly recommended to use caching, as otherwise
 #' the entire table could be downloaded only to access a small part of its
@@ -151,13 +143,13 @@ cso_get_interval <- function(table_code, cache_data = TRUE) {
   if (is.null(tbl)) {
     return(NULL)
   }
-
+  
   response_fj <- jsonlite::fromJSON(tbl)
-
-  if (!is.null(response_fj$dataset$dimension$role$time)) {
-    out <- response_fj$dataset$dimension$role$time
+  
+  if (!is.null(response_fj$dimension[[2]]$category$index)) {
+    out <- response_fj$dimension[[2]]$category$index 
   } else {
-    out <- "There is no time interval information for this statbank table"
+    out <- "There is no time interval information for this PxStat table"
   }
   return(out)
 }
@@ -165,52 +157,35 @@ cso_get_interval <- function(table_code, cache_data = TRUE) {
 
 #' Returns a character vector listing the statistics in a CSO data table
 #'
-#' Uses the ContentsIndicatorsList service of the CSO Statbank API to
-#' returns a list the contained statistics for a table.
-#' See \url{https://statbank.cso.ie/StatbankServices/StatbankServices.svc/
-#' jsonservice/help/operations/ContentsIndicatorsList}
-#' for more information on this.
 #'
-#' @param table_code string. A valid code for one table from the
-#' StatBank.
+#' @param table_code string. A valid code for a table on data.cso.ie .
+#' @param cache_data logical. Whether to use cached data, if available.
+#' Default value is TRUE.
 #' @return character vector. The names of the statistics included in the
 #' table, with one element for each statistic.
 #' @export
 #' @examples
 #' cso_get_content("EP008")
-cso_get_content <- function(table_code) {
+cso_get_content <- function(table_code, cache_data = TRUE) {
   # Pull the list from API and keep only useful column -----
-  url <- paste0(
-    "https://statbank.cso.ie/StatbankServices/StatbankServices",
-    ".svc/jsonservice/ContentsIndicatorsList/", table_code
-  )
-
-  # Check for errors using trycatch since StatBank API does not support
-  # html head requests.
-  error_message =  paste0("Failed retrieving list of contents. Please ",
-          "check internet connection and that statbank.cso.ie is online")
-
-  cont_list <- tryCatch({
-    data.frame(jsonlite::fromJSON(url))
-  }, warning = function(w) {
-    print(paste0("Warning: ", error_message))
+  tbl <- cso_download_tbl(table_code, cache_data)
+  # Error Checking ----------------------
+  if (is.null(tbl)) {
     return(NULL)
-  }, error = function(e) {
-    print(paste0("Error: ", error_message))
-    return(NULL)
-  })
-
-  as.character(cont_list$ContentsIndicatorvalue)
+  }
+  
+  response_fj <- jsonlite::fromJSON(tbl)
+  
+  as.character(response_fj$dimension$STATISTIC$category$label)
 }
 
 
-#' Prints metadata from a StatBank table to the console
+#' Prints metadata from a PxStat table to the console
 #'
 #' Takes the output from \code{\link{cso_get_meta}} and prints it to the
 #' console as formatted text.
 #'
-#' @param table_code string. A valid code for one table from the
-#' StatBank.
+#' @param table_code string. A valid code for a table on data.cso.ie .
 #' @export
 #' @examples
 #' \dontrun{
@@ -218,21 +193,18 @@ cso_get_content <- function(table_code) {
 #' }
 cso_disp_meta <- function(table_code) {
   meta <- cso_get_meta(table_code)
-
+  
   # Error Checking ----------------------
   if (is.null(meta)) {
     return(NULL)
   }
-
+  
   message("*** METADATA ***\n")
   message("CSO Table = ", meta$Title, "\n")
   message("Units = ", meta$Units, "\n")
-  message("Source = ", meta$Source, "\n")
+  message("Copyright = ", meta$Copyright, "\n")
   message("Time interval in data = ", meta$Time, "\n")
-  message(
-    "Date downloaded from statbank = ",
-    meta$Date_downloaded_from_StatBank, "\n"
-  )
+  message("Are these statistics experimental? -", meta$Is_Experimental, "\n")
   message("Date last modified = ", meta$Date_last_modified, "\n")
   message("Variables:")
   print(meta$Variables)

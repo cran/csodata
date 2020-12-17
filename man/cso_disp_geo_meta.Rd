@@ -7,8 +7,7 @@
 cso_disp_geo_meta(shp)
 }
 \arguments{
-\item{shp}{sf data.frame. Geographic data stored as an sf object.
-StatBank.}
+\item{shp}{sf data.frame. Geographic data stored as an sf object.}
 }
 \description{
 Takes the output from \code{\link{cso_get_geo}} or otherwise and prints

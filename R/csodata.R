@@ -1,7 +1,7 @@
 #' csodata: A package for downloading CSO data.
 #'
 #' The csodata package allows for easily downloading CSO (Central Statistics
-#' Office, the National Statistics Institute of Ireland) StatBank data into R.
+#' Office, the National Statistics Institute of Ireland) PxStat data into R.
 #'
 #' A specific table can be downloaded using \code{\link{cso_get_data}},
 #' while a list of all tables currently available and their titles can
@@ -14,7 +14,7 @@
 #' \code{\link{cso_get_vars}}, \code{\link{cso_get_interval}}, and
 #' \code{\link{cso_get_content}} all return a subset of the full metadata of
 #' a table. \code{\link{cso_get_var_values}} returns all the variables in the
-#' tables, as well as the values they have.
+#' tables.
 #'
 #' These functions provide the option to cache the returned data using the
 #' R.cache package. The cache can be deleted using

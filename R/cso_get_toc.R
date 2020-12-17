@@ -1,13 +1,12 @@
-#' Returns a data frame with all valid CSO Statbank tables listed sequentially
+#' Returns a data frame with all valid CSO PxStat tables listed sequentially
 #' by id number, e.g. A0101, A0102, A0103, etc.
 #'
-#' Checks the CSO Statbank API for a list of all the table codes (e.g. A0101,
+#' Checks the CSO PxStat API for a list of all the table codes (e.g. A0101,
 #' A0102, A0103, etc.), which also includes date last modified and title for
 #' each table, and returns this list as an R data frame.
 #'
-#' The data is pulled from the TitledetailsList on the CSO API. See
-#' \url{https://statbank.cso.ie/StatbankServices/StatbankServices.svc/
-#' jsonservice/help/operations/TitledetailsList}
+#' The data is pulled from the ReadCollection on the CSO API. See
+#' \url{https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadCollection}
 #' for more information on this.
 #'
 #' @param cache logical. If TRUE (default) the table of contents is cached
@@ -28,10 +27,12 @@
 #' head(cso_get_toc())
 cso_get_toc <- function(cache = TRUE, suppress_messages = FALSE) {
   url <- paste0(
-    "https://statbank.cso.ie/StatbankServices/",
-    "StatbankServices.svc/jsonservice/TitledetailsList"
+    
+    "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadCollection"
+    
   )
-
+  
+  # cache
   if (cache) {
     data <- R.cache::loadCache(list("cso_toc", Sys.Date()), dirs = "csodata")
     if (!is.null(data)) {
@@ -40,13 +41,14 @@ cso_get_toc <- function(cache = TRUE, suppress_messages = FALSE) {
       }
       return(data)
     } else {
-      # Check for errors using trycatch since StatBank API does not support
+      # Check for errors using trycatch since PxStat API does not support
       # html head requests.
       error_message =  paste0("Failed retrieving table of contents. Please ",
-              "check internet connection and that statbank.cso.ie is online")
-
+                              "check internet connection and that data.cso.ie is online")
+      
       tbl <- tryCatch({
         data.frame(jsonlite::fromJSON(url))
+        
       }, warning = function(w) {
         print(paste0("Warning: ", error_message))
         return(NULL)
@@ -54,12 +56,17 @@ cso_get_toc <- function(cache = TRUE, suppress_messages = FALSE) {
         print(paste0("Error: ", error_message))
         return(NULL)
       })
-
-
-      tbl2 <- tbl[c("id", "LastModified", "title")]
+      
+      
+      tbl2 <- cbind(tbl[c("link.item.updated","link.item.label")],data.frame(tbl$link.item.extension$matrix))
       tbl3 <- dplyr::mutate_if(tbl2, is.factor, as.character)
+      
+      names(tbl3)[1] <- "LastModified"
+      names(tbl3)[2] <- "title"
+      names(tbl3)[3] <- "id"
+      
       tbl3$LastModified <- as.POSIXct(tbl3$LastModified,
-                                      format = "%b %d %Y %I:%M%p", tz = "GMT")
+                                      format = "%M", tz = "GMT")
       R.cache::saveCache(tbl3,
                          key = list("cso_toc", Sys.Date()), dirs = "csodata"
       )
@@ -68,12 +75,17 @@ cso_get_toc <- function(cache = TRUE, suppress_messages = FALSE) {
   }
   # No caching --------------------------
   tbl <- data.frame(jsonlite::fromJSON(url))
-
-  tbl2 <- tbl[c("id", "LastModified", "title")]
+  tbl2 <- cbind(tbl[c("link.item.updated","link.item.label")],data.frame(tbl$link.item.extension$matrix))
   tbl3 <- dplyr::mutate_if(tbl2, is.factor, as.character)
-
+  
+  
+  names(tbl3)[1] <- "LastModified"
+  names(tbl3)[2] <- "title"
+  names(tbl3)[3] <- "id"
+  
   tbl3$LastModified <- as.POSIXct(tbl3$LastModified,
-                                  format = "%b %d %Y %I:%M%p", tz = "GMT")
+                                  format = "%M", tz = "GMT")
+  
   return(tbl3)
 }
 

@@ -4,20 +4,26 @@
 \alias{cso_get_data}
 \title{Return a CSO table as a data frame}
 \usage{
-cso_get_data(table_code, wide_format = "wide", include_ids = TRUE,
-  id_list = NULL, use_factors = TRUE, cache = TRUE)
+cso_get_data(
+  table_code,
+  wide_format = "wide",
+  include_ids = FALSE,
+  id_list = NULL,
+  use_factors = TRUE,
+  cache = TRUE
+)
 }
 \arguments{
 \item{table_code}{string. If the table_code is a filename or a path to a
 file, e.g. "QNQ22.json", it is imported from that file. Otherwise if it is
-only a table code e.g. "QNQ22", the file is downloaded from StatBank and
+only a table code e.g. "QNQ22", the file is downloaded from data.cso and
 checked to see if it is a valid table.}
 
 \item{wide_format}{string, one of "wide", "very_wide" or "tall". If "wide"
 (default) the table is returned in wide (human readable) format, with
 statistic as a column (if it exists). If "very_wide" the table is returned
 wide format and spreads the statistic column to rows. If "tall" the table is
-returned in tall/tidy format.}
+returned in tall (statistic and value) format.}
 
 \item{include_ids}{logical. The JSON-stat format stores variables as ids
 i.e. IE11 and labels i.e. Border. While the label is generally preferred,
@@ -34,7 +40,7 @@ if NULL then every column that is not included in the vector
 strings.}
 
 \item{cache}{logical. if TRUE (default) csodata will cache the result using
-R.cache. The raw data downloaded from the statbank is cached, which means
+R.cache. The raw data downloaded from the data.csi.ie is cached, which means
 that calling \code{cso_get_data} with the same table_code but different
 parameterswill result in cached data being used.}
 }
@@ -42,9 +48,9 @@ parameterswill result in cached data being used.}
 data frame of the requested CSO table.
 }
 \description{
-Returns a CSO table from the CSO StatBank Application Programming Interface
+Returns a CSO table from the CSO PxStat Application Programming Interface
 (API) as a data frame, with the option to give it in wide format (default)
-very wide or long/tidy format.
+very wide or long format.
 }
 \details{
 The data is pulled from the ResponseInstance service on the CSO API in

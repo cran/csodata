@@ -2,7 +2,7 @@
 % Please edit documentation in R/cso_get_toc.R
 \name{cso_get_toc}
 \alias{cso_get_toc}
-\title{Returns a data frame with all valid CSO Statbank tables listed sequentially
+\title{Returns a data frame with all valid CSO PxStat tables listed sequentially
 by id number, e.g. A0101, A0102, A0103, etc.}
 \usage{
 cso_get_toc(cache = TRUE, suppress_messages = FALSE)
@@ -25,14 +25,13 @@ available on the CSO API.
 }
 }
 \description{
-Checks the CSO Statbank API for a list of all the table codes (e.g. A0101,
+Checks the CSO PxStat API for a list of all the table codes (e.g. A0101,
 A0102, A0103, etc.), which also includes date last modified and title for
 each table, and returns this list as an R data frame.
 }
 \details{
-The data is pulled from the TitledetailsList on the CSO API. See
-\url{https://statbank.cso.ie/StatbankServices/StatbankServices.svc/
-jsonservice/help/operations/TitledetailsList}
+The data is pulled from the ReadCollection on the CSO API. See
+\url{https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadCollection}
 for more information on this.
 }
 \examples{

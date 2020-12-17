@@ -164,7 +164,6 @@ cso_get_geo_meta <- function(shp) {
 #' information about it to the console as formatted text.
 #'
 #' @param shp sf data.frame. Geographic data stored as an sf object.
-#' StatBank.
 #' @export
 #' @examples
 #' \dontrun{
@@ -173,8 +172,7 @@ cso_get_geo_meta <- function(shp) {
 cso_disp_geo_meta <- function(shp) {
   contents <- setdiff(names(shp), "geometry")
   shp_meta <- cso_get_geo_meta(shp)
-  date_range <- range(as.POSIXlt(shp$CREATEDATE,
-                                 format = "%d-%m-%Y", tz = "GMT"))
+  #date_range <- range(as.POSIXlt(shp$CREATEDATE, format = "%d-%m-%Y", tz = "GMT"))
 
   message("*** GEOGRAPHIC METADATA ***")
   print(sf::st_crs(shp))
@@ -182,8 +180,7 @@ cso_disp_geo_meta <- function(shp) {
   message("All polygons are simple? = ", shp_meta$all_simple, "\n")
   message("Any polygons is empty? = ", shp_meta$any_empty, "\n")
   message("All polygons are valid? = ", shp_meta$all_valid, "\n")
-  message("Creation date range = ", as.character(date_range[[1]]), "--",
-      as.character(date_range[[2]]), "\n")
+  #message("Creation date range = ", as.character(date_range[[1]]), "--", as.character(date_range[[2]]), "\n")
   message("Average polygon area = ")
   print(shp_meta$average_area)
   message("\n*** ADDITIONAL DATA INCLUDED ***")

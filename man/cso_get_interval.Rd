@@ -7,8 +7,7 @@
 cso_get_interval(table_code, cache_data = TRUE)
 }
 \arguments{
-\item{table_code}{string. A valid code for one table from the
-StatBank.}
+\item{table_code}{string. A valid code for a table on data.cso.ie .}
 
 \item{cache_data}{logical. Whether to use cached data, if available.
 Default value is TRUE. Strongly recommended to use caching, as otherwise

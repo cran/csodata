@@ -4,38 +4,32 @@
 \alias{cso_get_meta}
 \title{Returns a data frame with the metadata of a CSO data table}
 \usage{
-cso_get_meta(table_code, cache_data = TRUE, cache_toc = TRUE)
+cso_get_meta(table_code, cache_data = TRUE)
 }
 \arguments{
-\item{table_code}{string. A valid code for a table from the StatBank.}
+\item{table_code}{string. A valid code for a table on data.cso.ie .}
 
 \item{cache_data}{logical. Whether to use cached data, if available.
 Default value is TRUE.}
-
-\item{cache_toc}{logical. Whether to use cached table of contents, if
-available. Default value is TRUE.}
 }
 \value{
 list with eight elements:
 \itemize{
   \item The title of the table.
-  \item The source of the data.
-  \item The date when the data was retrieved from StatBank.
-  \item The time interval used in the data. (Census year, Quarter, Month)
   \item The units used (the R class of the value column)
+  \item The Copyright on the data.
+  \item The time interval used in the data. (Census year, Quarter, Month)
   \item The date the table was last modified.
   \item The names of the variables included in the table, returned as a
   character vector with one element for each variable.
   \item The names of the statistics included in the table, returned as a
   character vector with one element for each statistic.
+  \item An indicator if the statistics are experimental
 }
 }
 \description{
-Checks the CSO Statbank API for a metadata on a dataset and returns it as a
+Checks the CSO PxStat API for a metadata on a dataset and returns it as a
 list of metadata and contained statistics.
-}
-\details{
-The statistics are pulled using the \code{\link{cso_get_content}} function.
 }
 \examples{
 \dontrun{

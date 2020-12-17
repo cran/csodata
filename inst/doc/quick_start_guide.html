@@ -12,7 +12,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-<meta name="date" content="2020-08-13" />
+<meta name="date" content="2020-12-16" />
 
 <title>csodata quick start guide</title>
 
@@ -302,7 +302,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 
 
 <h1 class="title toc-ignore">csodata quick start guide</h1>
-<h4 class="date">2020-08-13</h4>
+<h4 class="date">2020-12-16</h4>
 
 
 
@@ -320,20 +320,20 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1">toc &lt;-<span class="st"> </span><span class="kw">cso_get_toc</span>()</a>
 <a class="sourceLine" id="cb2-2" title="2"><span class="co">#&gt; Loaded cached toc</span></a>
 <a class="sourceLine" id="cb2-3" title="3"><span class="kw">head</span>(toc)</a>
-<a class="sourceLine" id="cb2-4" title="4"><span class="co">#&gt;      id        LastModified</span></a>
-<a class="sourceLine" id="cb2-5" title="5"><span class="co">#&gt; 1 A0101 2018-03-14 11:01:00</span></a>
-<a class="sourceLine" id="cb2-6" title="6"><span class="co">#&gt; 2 A0102 2018-03-13 13:50:00</span></a>
-<a class="sourceLine" id="cb2-7" title="7"><span class="co">#&gt; 3 A0103 2018-03-13 13:50:00</span></a>
-<a class="sourceLine" id="cb2-8" title="8"><span class="co">#&gt; 4 A0104 2018-03-13 13:50:00</span></a>
-<a class="sourceLine" id="cb2-9" title="9"><span class="co">#&gt; 5 A0105 2018-03-13 13:50:00</span></a>
-<a class="sourceLine" id="cb2-10" title="10"><span class="co">#&gt; 6 A0106 2018-03-13 13:50:00</span></a>
-<a class="sourceLine" id="cb2-11" title="11"><span class="co">#&gt;                                                                                                           title</span></a>
-<a class="sourceLine" id="cb2-12" title="12"><span class="co">#&gt; 1     1996 Population and Percentage Change  1991 and 1996 by Province County or City, CensusYear and Statistic</span></a>
-<a class="sourceLine" id="cb2-13" title="13"><span class="co">#&gt; 2                          1996 Population at Each Census Since 1841 by  Sex, Province or County and CensusYear</span></a>
-<a class="sourceLine" id="cb2-14" title="14"><span class="co">#&gt; 3                 1996 Population by  Sex, Aggregate Town or Rural Area, Province County or City and CensusYear</span></a>
-<a class="sourceLine" id="cb2-15" title="15"><span class="co">#&gt; 4                                              Population by  Sex, Regional Authority, CensusYear and Statistic</span></a>
-<a class="sourceLine" id="cb2-16" title="16"><span class="co">#&gt; 5 1996 Population and Percentage Change  1996 and 2002 by Towns by Electoral Division, CensusYear and Statistic</span></a>
-<a class="sourceLine" id="cb2-17" title="17"><span class="co">#&gt; 6                         1996 Population Density and Area Size by Electoral Division, CensusYear and Statistic</span></a></code></pre></div>
+<a class="sourceLine" id="cb2-4" title="4"><span class="co">#&gt;          LastModified                                                title</span></a>
+<a class="sourceLine" id="cb2-5" title="5"><span class="co">#&gt; 1 2020-12-16 00:20:00  2002 Population and Percentage Change 1996 and 2002</span></a>
+<a class="sourceLine" id="cb2-6" title="6"><span class="co">#&gt; 2 2020-12-16 00:20:00 1996 Population and Percentage Change  1991 and 1996</span></a>
+<a class="sourceLine" id="cb2-7" title="7"><span class="co">#&gt; 3 2020-12-16 00:20:00               1996 Population Aged 15 Years and Over</span></a>
+<a class="sourceLine" id="cb2-8" title="8"><span class="co">#&gt; 4 2020-12-16 00:20:00                                      2002 Population</span></a>
+<a class="sourceLine" id="cb2-9" title="9"><span class="co">#&gt; 5 2020-12-16 00:20:00                         2002 Population Change since</span></a>
+<a class="sourceLine" id="cb2-10" title="10"><span class="co">#&gt; 6 2020-12-16 00:20:00           Population Change and Average Annual Rates</span></a>
+<a class="sourceLine" id="cb2-11" title="11"><span class="co">#&gt;      id</span></a>
+<a class="sourceLine" id="cb2-12" title="12"><span class="co">#&gt; 1 B0101</span></a>
+<a class="sourceLine" id="cb2-13" title="13"><span class="co">#&gt; 2 A0101</span></a>
+<a class="sourceLine" id="cb2-14" title="14"><span class="co">#&gt; 3 A0502</span></a>
+<a class="sourceLine" id="cb2-15" title="15"><span class="co">#&gt; 4 B0103</span></a>
+<a class="sourceLine" id="cb2-16" title="16"><span class="co">#&gt; 5 B0401</span></a>
+<a class="sourceLine" id="cb2-17" title="17"><span class="co">#&gt; 6 B0402</span></a></code></pre></div>
 </div>
 <div id="downloading-data" class="section level4">
 <h4>Downloading Data</h4>
@@ -346,17 +346,17 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <a class="sourceLine" id="cb4-3" title="3"><span class="kw">cso_disp_meta</span>(<span class="st">&quot;CDP06&quot;</span>)</a>
 <a class="sourceLine" id="cb4-4" title="4"><span class="co">#&gt; Loaded cached data</span></a>
 <a class="sourceLine" id="cb4-5" title="5"><span class="co">#&gt; *** METADATA ***</span></a>
-<a class="sourceLine" id="cb4-6" title="6"><span class="co">#&gt; CSO Table = Annual Estimated Net Migration 1951 to 2011 per 1,000 of Average Population by  Intercensal Period, Province or County and Year</span></a>
-<a class="sourceLine" id="cb4-7" title="7"><span class="co">#&gt; Units = numeric</span></a>
-<a class="sourceLine" id="cb4-8" title="8"><span class="co">#&gt; Source = Central Statistics Office, Ireland</span></a>
+<a class="sourceLine" id="cb4-6" title="6"><span class="co">#&gt; CSO Table = Annual Estimated Net Migration 1951 to 2011 per 1,000 of Average Population</span></a>
+<a class="sourceLine" id="cb4-7" title="7"><span class="co">#&gt; Units = Number</span></a>
+<a class="sourceLine" id="cb4-8" title="8"><span class="co">#&gt; Copyright = Central Statistics Office, Ireland</span></a>
 <a class="sourceLine" id="cb4-9" title="9"><span class="co">#&gt; Time interval in data = Year</span></a>
-<a class="sourceLine" id="cb4-10" title="10"><span class="co">#&gt; Date downloaded from statbank = 2020-08-12T14:12:38Z</span></a>
-<a class="sourceLine" id="cb4-11" title="11"><span class="co">#&gt; Date last modified = 2012-07-03 11:47:00</span></a>
+<a class="sourceLine" id="cb4-10" title="10"><span class="co">#&gt; Are these statistics experimental? -FALSE</span></a>
+<a class="sourceLine" id="cb4-11" title="11"><span class="co">#&gt; Date last modified = 2020-10-30T11:00:00.000Z</span></a>
 <a class="sourceLine" id="cb4-12" title="12"><span class="co">#&gt; Variables:</span></a>
-<a class="sourceLine" id="cb4-13" title="13"><span class="co">#&gt; [1] &quot;Intercensal Period&quot; &quot;Province or County&quot; &quot;Year&quot;</span></a>
+<a class="sourceLine" id="cb4-13" title="13"><span class="co">#&gt; [1] &quot;Year&quot;               &quot;Intercensal Period&quot; &quot;Province or County&quot;</span></a>
 <a class="sourceLine" id="cb4-14" title="14"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb4-15" title="15"><span class="co">#&gt; Statistics:</span></a>
-<a class="sourceLine" id="cb4-16" title="16"><span class="co">#&gt; [1] &quot;Annual Estimated Net Migration 1951 to 2011 per 1,000 of Average Population (Number)&quot;</span></a></code></pre></div>
+<a class="sourceLine" id="cb4-16" title="16"><span class="co">#&gt; [1] &quot;Annual Estimated Net Migration 1951 to 2011 per 1,000 of Average Population&quot;</span></a></code></pre></div>
 </div>
 <div id="geographic-data" class="section level4">
 <h4>Geographic Data</h4>
