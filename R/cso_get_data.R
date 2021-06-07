@@ -31,6 +31,9 @@
 #' R.cache. The raw data downloaded from the data.csi.ie is cached, which means
 #' that calling \code{cso_get_data} with the same table_code but different
 #' parameterswill result in cached data being used.
+#' @param flush_cache logical. If TRUE (default) the cache will be checked for 
+#' old, unused files. Any files which have not been accessed in the last month
+#'  will be deleted
 #' @return data frame of the requested CSO table.
 #' @export
 #' @examples
@@ -39,7 +42,7 @@
 #' tbl2 <- cso_get_data("QLF07.json")
 #' }
 cso_get_data <- function(table_code, wide_format = "wide", include_ids = FALSE,
-                         id_list = NULL, use_factors = TRUE, cache = TRUE) {
+                         id_list = NULL, use_factors = TRUE, cache = TRUE, flush_cache = TRUE) {
   # Set path to or download data --------
   if (substr(
     table_code, nchar(table_code) - 4, nchar(table_code)
@@ -50,7 +53,7 @@ cso_get_data <- function(table_code, wide_format = "wide", include_ids = FALSE,
       stop("Not a valid path to a .json file")
     }
   } else {
-    json_data <- cso_download_tbl(table_code, cache = cache)
+    json_data <- cso_download_tbl(table_code, cache = cache, flush_cache)
     # Error Checking ----------------------
     if (is.null(json_data)) {
       return(NULL)
@@ -124,7 +127,7 @@ cso_get_data <- function(table_code, wide_format = "wide", include_ids = FALSE,
 #' Programming Interface (API) as a JSON-stat dataset.
 #'
 #' The data is pulled from the ReadDataset service on the CSO API in
-#' JSON-Stat fromat, using the GET method from the httr package.
+#' JSON-Stat format, using the GET method from the httr package.
 #'
 #' To improve performance, the result is cached by default.
 #'
@@ -132,10 +135,16 @@ cso_get_data <- function(table_code, wide_format = "wide", include_ids = FALSE,
 #' @param cache logical. Indicates whether to cache the result using R.cache.
 #' @param suppress_messages logical. If FALSE (default) a message is printed
 #' when loading a previously cached data table.
+#' @param flush_cache logical. If TRUE (default) the cache will be checked for 
+#' old, unused files. Any files which have not been accessed in the last month 
+#' will be deleted
 #' @return a character object, containing the data in JSON-stat format.
 #' @noRd
+#' @importFrom utils fileSnapshot
+
+
 cso_download_tbl <- function(table_code, cache = TRUE,
-                             suppress_messages = FALSE) {
+                             suppress_messages = FALSE, flush_cache = TRUE) {
   url <- paste0(
     "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/",
     table_code, "/JSON-stat/2.0/en"
@@ -144,7 +153,7 @@ cso_download_tbl <- function(table_code, cache = TRUE,
   # Attempt to retrieve cached data -----
   if (cache) {
     toc <- cso_get_toc(suppress_messages = TRUE)
-    last_update <- toc[toc$id == table_code, 2]
+    last_update <- toc[toc$id == table_code, 1]
     data <- R.cache::loadCache(list(table_code, last_update), dirs = "csodata")
     if (!is.null(data)) {
       if (!suppress_messages) {
@@ -153,6 +162,18 @@ cso_download_tbl <- function(table_code, cache = TRUE,
       return(data)
     }
   }
+  
+  #Empty out the cache of unused files if a new file is being downloaded
+  if(flush_cache){
+    file.remove(
+      rownames(
+        fileSnapshot(paste0(R.cache::getCachePath(),"/csodata"), full.names = T, recursive = T)$info[!lubridate::`%within%`(
+          fileSnapshot(paste0(R.cache::getCachePath(),"/csodata"), full.names = T, recursive = T)$info[,"atime"],
+          lubridate::interval(start = lubridate::`%m+%`(Sys.Date(),months(-1)) , end = Sys.Date() + lubridate::days(1))) , ]
+      )
+    )
+  }
+  
   
   # No caching, or cache empty ----------
   
@@ -167,9 +188,12 @@ cso_download_tbl <- function(table_code, cache = TRUE,
     print(paste0("Warning: ", error_message))
     return(NULL)
   }, error = function(e) {
-    print(paste0("Error: ", error_message))
+    message(paste0("Connection Error: ", error_message))
     return(NULL)
   })
+  
+  #Cut off if theres issues
+  if(is.null(response)){return(NULL)}
   
   # Check if data valid -------------
   if (httr::status_code(response) == 200 &&
@@ -178,7 +202,7 @@ cso_download_tbl <- function(table_code, cache = TRUE,
     json_data <- rawToChar(response[["content"]])
     if (cache) {
       toc <- cso_get_toc(suppress_messages = TRUE)
-      last_update <- toc[toc$id == table_code, 2]
+      last_update <- toc[toc$id == table_code, 1]
       R.cache::saveCache(json_data,
                          key = list(table_code, last_update), dirs = "csodata"
       )

@@ -4,15 +4,18 @@
 \alias{cso_get_vars}
 \title{Returns a character vector listing the contents of a CSO data table}
 \usage{
-cso_get_vars(table_code, cache_data = TRUE)
+cso_get_vars(table_code, cache = TRUE, flush_cache = TRUE)
 }
 \arguments{
 \item{table_code}{string. A valid code for a table on data.cso.ie .}
 
-\item{cache_data}{logical. Whether to use cached data, if available.
+\item{cache}{logical. Whether to use cached data, if available.
 Default value is TRUE. Strongly recommended to use caching, as otherwise
 the entire table could be downloaded only to access a small part of its
 metadata.}
+
+\item{flush_cache}{logical. If TRUE (default) the cache will be checked for old, unused
+files. Any files which have not been accessed in the last month will be deleted.}
 }
 \value{
 character vector. The names of the statistics included in the
@@ -23,5 +26,7 @@ Reads the metadata of a table to return a character vector of the
 included variables in the table.
 }
 \examples{
+\dontrun{
 cso_get_vars("IPA03")
+}
 }

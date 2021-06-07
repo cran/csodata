@@ -4,13 +4,16 @@
 \alias{cso_get_content}
 \title{Returns a character vector listing the statistics in a CSO data table}
 \usage{
-cso_get_content(table_code, cache_data = TRUE)
+cso_get_content(table_code, cache = TRUE, flush_cache = TRUE)
 }
 \arguments{
 \item{table_code}{string. A valid code for a table on data.cso.ie .}
 
-\item{cache_data}{logical. Whether to use cached data, if available.
+\item{cache}{logical. Whether to use cached data, if available.
 Default value is TRUE.}
+
+\item{flush_cache}{logical. If TRUE (default) the cache will be checked for old, unused
+files. Any files which have not been accessed in the last month will be deleted}
 }
 \value{
 character vector. The names of the statistics included in the
@@ -20,5 +23,7 @@ table, with one element for each statistic.
 Returns a character vector listing the statistics in a CSO data table
 }
 \examples{
-cso_get_content("EP008")
+\dontrun{
+var_cont <- cso_get_content("EP008")
+}
 }

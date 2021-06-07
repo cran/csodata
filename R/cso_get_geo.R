@@ -32,40 +32,43 @@
 #' Until v0.1.5 "NUTS2" and "NUTS3" gave access to the 2011 dataset.
 #' @param cache logical. Indicates whether to cache the result using R.cache.
 #' TRUE by default.
+#' @param flush_cache logical. If TRUE (default) the cache will be checked for old, unused
+#' files. Any files which have not been accessed in the last month will be deleted
 #' @return data frame of the requested CSO table.
 #' @export
 #' @examples
 #' \dontrun{
 #' shp <- cso_get_geo("NUTS2")
 #' }
-cso_get_geo <- function(map_data, cache = TRUE) {
+
+cso_get_geo <- function(map_data, cache = TRUE, flush_cache = TRUE) {
   dl_path <- "http://census.cso.ie/censusasp/saps/boundaries/"
   # Set shapefile name ------------------
   fname <- dplyr::case_when(
     map_data == "Provinces" || map_data == "p" ~
-    "Census2011_Province_generalised20m",
+      "Census2011_Province_generalised20m",
     map_data == "NUTS2" ~ "NUTS2_Boundaries_Generalised_20m__OSi_National_Statistical_Boundaries__2015",
     map_data == "NUTS3" ~ "NUTS3_Boundaries_Generalised_20m__OSi_National_Statistical_Boundaries__2015",
     map_data == "NUTS2_2011" ~ "Census2011_NUTS2_generalised20m",
     map_data == "NUTS3_2011" ~ "Census2011_NUTS3_generalised20m",
     map_data == "Administrative Counties" ||
       map_data == "admin_counties" || map_data == "ac" ~
-    "Census2011_Admin_Counties_generalised20m",
+      "Census2011_Admin_Counties_generalised20m",
     map_data == "Electoral Divisions" ||
       map_data == "elec_div" || map_data == "ed" ~
-    "Census2011_Electoral_Divisions_generalised20m",
+      "Census2011_Electoral_Divisions_generalised20m",
     map_data == "Small Areas" || map_data == "sa" ~
-    "Census2011_Small_Areas_generalised20m",
+      "Census2011_Small_Areas_generalised20m",
     map_data == "Gaeltacht" || map_data == "g" ~
-    "Census2011_Gaeltacht",
+      "Census2011_Gaeltacht",
     TRUE ~ NA_character_
   )
-
+  
   # Need to separate error check. Including it in case_when causes error ---
   if (is.na(fname)) {
     stop("Not one of the available map files.")
   }
-
+  
   if (map_data == "NUTS2") {
     url <- "https://opendata.arcgis.com/datasets/62e0cf326bab442897944e4dc4999c16_2.zip"
   } else if (map_data == "NUTS3") {
@@ -73,7 +76,7 @@ cso_get_geo <- function(map_data, cache = TRUE) {
   } else {
     url <- paste0(dl_path, fname, ".zip")
   }
-
+  
   # Retreive cached data ----------------
   if (cache) {
     data <- R.cache::loadCache(list(fname), dirs = "csodata/geodata")
@@ -82,20 +85,31 @@ cso_get_geo <- function(map_data, cache = TRUE) {
       return(data)
     }
   }
-
+  
+  #Empty out the cache of unused files if a new file is being downloaded
+  if(flush_cache){
+    file.remove(
+      rownames(
+        fileSnapshot(paste0(R.cache::getCachePath(),"/csodata"), full.names = T, recursive = T)$info[!lubridate::`%within%`(
+          fileSnapshot(paste0(R.cache::getCachePath(),"/csodata"), full.names = T, recursive = T)$info[,"atime"],
+          lubridate::interval(start = Sys.Date()- months(1) , end = Sys.Date() + lubridate::days(1))) , ]
+      )
+    )
+  }
+  
   # No caching, or cache empty ----------
   tmpdir <- tempdir()
   filepath <- paste0(tmpdir, "/", fname, ".zip")
-
+  
   error_message =  paste0("Failed retrieving map data. Please check internet",
-            " connection and that cso.ie and opendata.arcgis.com are online")
+                          " connection and that cso.ie and opendata.arcgis.com are online")
   if (httr::http_error(url)) {
     print(paste0("Error: ", error_message))
     return(NULL)
   } else {
     utils::download.file(url, filepath)
   }
-
+  
   utils::unzip(filepath, exdir = tmpdir)
   if (map_data == "NUTS2") {
     shape_file <- paste0(tmpdir, "/", "c2f2dbb3-289e-45cc-ae79-791cbc9339632020330-1-1uh3380.g89t.shp")
@@ -106,14 +120,14 @@ cso_get_geo <- function(map_data, cache = TRUE) {
   }
   
   shp <- sf::st_read(shape_file, stringsAsFactors = F)
-
-
+  
+  
   if (map_data == "NUTS2" | map_data == "NUTS3") {
     # Transform OSi maps to use Irish grid projection, like CSO maps
     ire_proj = "+proj=tmerc +lat_0=53.5 +lon_0=-8 +k=1.000035 +x_0=200000 +y_0=250000 +datum=ire65 +units=m +no_defs"
     shp <- sf::st_transform(shp, ire_proj)
   }
-
+  
   if (cache) {
     R.cache::saveCache(shp, key = list(fname), dirs = "csodata/geodata")
   }

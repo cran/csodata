@@ -4,13 +4,16 @@
 \alias{cso_get_var_values}
 \title{Returns a list of the values of variables of a CSO data table}
 \usage{
-cso_get_var_values(table_code, cache_data = TRUE)
+cso_get_var_values(table_code, cache = TRUE, flush_cache = TRUE)
 }
 \arguments{
 \item{table_code}{string. A valid code for a table on data.cso.ie .}
 
-\item{cache_data}{logical. Whether to use cached data, if available.
+\item{cache}{logical. Whether to use cached data, if available.
 Default value is TRUE.}
+
+\item{flush_cache}{logical. If TRUE (default) the cache will be checked for old, unused
+files. Any files which have not been accessed in the last month will be deleted}
 }
 \value{
 list. It has length equal to the number of variables in the table,
@@ -22,5 +25,8 @@ Reads the table to determine all the unique values taken by the
 variables in the table and returns them as a list.
 }
 \examples{
+\dontrun{
 var_val <- cso_get_var_values("IPA03")
+}
+
 }

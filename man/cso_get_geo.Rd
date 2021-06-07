@@ -4,7 +4,7 @@
 \alias{cso_get_geo}
 \title{Return geographic data as a sf data frame}
 \usage{
-cso_get_geo(map_data, cache = TRUE)
+cso_get_geo(map_data, cache = TRUE, flush_cache = TRUE)
 }
 \arguments{
 \item{map_data}{string. Indicates which shapefile to download. Options are:
@@ -23,6 +23,9 @@ Until v0.1.5 "NUTS2" and "NUTS3" gave access to the 2011 dataset.}
 
 \item{cache}{logical. Indicates whether to cache the result using R.cache.
 TRUE by default.}
+
+\item{flush_cache}{logical. If TRUE (default) the cache will be checked for old, unused
+files. Any files which have not been accessed in the last month will be deleted}
 }
 \value{
 data frame of the requested CSO table.

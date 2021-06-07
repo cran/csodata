@@ -4,7 +4,10 @@
 \alias{cso_search_toc}
 \title{Search list of all table descriptions for given string}
 \usage{
-cso_search_toc(string, toc = cso_get_toc(suppress_messages = TRUE))
+cso_search_toc(
+  string,
+  toc = cso_get_toc(suppress_messages = TRUE, flush_cache = FALSE)
+)
 }
 \arguments{
 \item{string}{string. The text to search for. Case insensitive.}
@@ -12,6 +15,10 @@ cso_search_toc(string, toc = cso_get_toc(suppress_messages = TRUE))
 \item{toc}{data.frame. The table of contents as returned by cso_get_toc. If
 not given, will be re-downloaded (or retrieved from cache) using
 cso_get_toc().}
+
+\item{flush_cache}{logical. If TRUE  the cache will be checked for old, unused
+files. Any files wich have not been accessed in the last month will be deleted
+strings.}
 }
 \value{
 data frame of three character columns, with layout identical to
@@ -23,5 +30,7 @@ Searches the list of all table descriptions returned by cso_get_toc() for a
 given substring.
 }
 \examples{
+\dontrun{
 trv <- cso_search_toc("travel")
+}
 }

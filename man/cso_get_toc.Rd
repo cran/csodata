@@ -5,7 +5,13 @@
 \title{Returns a data frame with all valid CSO PxStat tables listed sequentially
 by id number, e.g. A0101, A0102, A0103, etc.}
 \usage{
-cso_get_toc(cache = TRUE, suppress_messages = FALSE)
+cso_get_toc(
+  cache = TRUE,
+  suppress_messages = FALSE,
+  get_frequency = FALSE,
+  list_vars = FALSE,
+  flush_cache = TRUE
+)
 }
 \arguments{
 \item{cache}{logical. If TRUE (default) the table of contents is cached
@@ -13,6 +19,17 @@ with the system date as a key.}
 
 \item{suppress_messages}{logical. If FALSE (default) a message is printed
 when loading a previously cached table of contents.}
+
+\item{get_frequency}{logical. If TRUE the frequency of each 
+table(yearly, monthly etc...) will be returned as an additional column in 
+the table of contents}
+
+\item{list_vars}{logical. If TRUE an additional column will be added
+to the table of contents which lists each tables variables.}
+
+\item{flush_cache}{logical. If TRUE (default) the cache will be checked for 
+old, unused files. Any files which have not been accessed in the last month 
+will be deleted}
 }
 \value{
 data frame of three character columns:
@@ -31,9 +48,11 @@ each table, and returns this list as an R data frame.
 }
 \details{
 The data is pulled from the ReadCollection on the CSO API. See
-\url{https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadCollection}
+\url{https://github.com/CSOIreland/PxStat/wiki/API-Cube-RESTful}
 for more information on this.
 }
 \examples{
+\dontrun{
 head(cso_get_toc())
+}
 }

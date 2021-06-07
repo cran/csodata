@@ -5,8 +5,10 @@
 #'
 #'
 #' @param table_code string. A valid code for a table on data.cso.ie .
-#' @param cache_data logical. Whether to use cached data, if available.
+#' @param cache logical. Whether to use cached data, if available.
 #' Default value is TRUE.
+#' @param flush_cache logical. If TRUE (default) the cache will be checked for old, unused
+#' files. Any files which have not been accessed in the last month will be deleted
 #' @return list with eight elements:
 #' \itemize{
 #'   \item The title of the table.
@@ -22,13 +24,11 @@
 #' }
 #' @export
 #' @examples
-#' \dontrun{
-#' head(cso_get_meta("VSA16"))
-#' meta1 <- cso_get_meta("HS014")
-#' }
-cso_get_meta <- function(table_code, cache_data = TRUE) {
+#' meta1 <- cso_get_meta("HS014", cache = FALSE)
+#' 
+cso_get_meta <- function(table_code, cache = TRUE, flush_cache = TRUE) {
   # Use fromJSON in order to preserve metadata ---
-  tbl <- cso_download_tbl(table_code, cache_data)
+  tbl <- cso_download_tbl(table_code, cache, flush_cache)
   # Error Checking ----------------------
   if (is.null(tbl)) {
     return(NULL)
@@ -62,17 +62,21 @@ cso_get_meta <- function(table_code, cache_data = TRUE) {
 #' included variables in the table.
 #'
 #' @param table_code string. A valid code for a table on data.cso.ie .
-#' @param cache_data logical. Whether to use cached data, if available.
+#' @param cache logical. Whether to use cached data, if available.
 #' Default value is TRUE. Strongly recommended to use caching, as otherwise
 #' the entire table could be downloaded only to access a small part of its
 #' metadata.
+#' @param flush_cache logical. If TRUE (default) the cache will be checked for old, unused
+#' files. Any files which have not been accessed in the last month will be deleted.
 #' @return character vector. The names of the statistics included in the
 #' table.
 #' @export
 #' @examples
+#' \dontrun{
 #' cso_get_vars("IPA03")
-cso_get_vars <- function(table_code, cache_data = TRUE) {
-  tbl <- cso_download_tbl(table_code, cache_data)
+#' }
+cso_get_vars <- function(table_code, cache = TRUE, flush_cache = TRUE) {
+  tbl <- cso_download_tbl(table_code, cache, flush_cache)
   # Error Checking ----------------------
   if (is.null(tbl)) {
     return(NULL)
@@ -88,16 +92,21 @@ cso_get_vars <- function(table_code, cache_data = TRUE) {
 #' variables in the table and returns them as a list.
 #'
 #' @param table_code string. A valid code for a table on data.cso.ie .
-#' @param cache_data logical. Whether to use cached data, if available.
+#' @param cache logical. Whether to use cached data, if available.
 #' Default value is TRUE.
+#' @param flush_cache logical. If TRUE (default) the cache will be checked for old, unused
+#' files. Any files which have not been accessed in the last month will be deleted
 #' @return list. It has length equal to the number of variables in the table,
 #' and each element is a character vector which has all the values taken by
 #' one variable.
 #' @export
 #' @examples
+#' \dontrun{
 #' var_val <- cso_get_var_values("IPA03")
-cso_get_var_values <- function(table_code, cache_data = TRUE) {
-  tbl <- cso_download_tbl(table_code, cache_data)
+#' }
+#' 
+cso_get_var_values <- function(table_code, cache = TRUE, flush_cache = TRUE) {
+  tbl <- cso_download_tbl(table_code, cache, flush_cache)
   # Error Checking ----------------------
   if (is.null(tbl)) {
     return(NULL)
@@ -126,19 +135,21 @@ cso_get_var_values <- function(table_code, cache_data = TRUE) {
 #' gathered/calculated.
 #'
 #' @param table_code string. A valid code for a table on data.cso.ie .
-#' @param cache_data logical. Whether to use cached data, if available.
+#' @param cache logical. Whether to use cached data, if available.
 #' Default value is TRUE. Strongly recommended to use caching, as otherwise
 #' the entire table could be downloaded only to access a small part of its
 #' metadata.
+#' @param flush_cache logical. If TRUE (default) the cache will be checked for old, unused
+#' files. Any files which have not been accessed in the last month will be deleted
 #' @return character vector. The names of the statistics included in the
 #' table, with one element for each statistic.
 #' @export
 #' @examples
 #' \dontrun{
-#' cso_get_interval("C0636")
+#' interval <- cso_get_interval("C0636")
 #' }
-cso_get_interval <- function(table_code, cache_data = TRUE) {
-  tbl <- cso_download_tbl(table_code, cache_data)
+cso_get_interval <- function(table_code, cache = TRUE, flush_cache = TRUE) {
+  tbl <- cso_download_tbl(table_code, cache, flush_cache)
   # Error Checking ----------------------
   if (is.null(tbl)) {
     return(NULL)
@@ -159,16 +170,20 @@ cso_get_interval <- function(table_code, cache_data = TRUE) {
 #'
 #'
 #' @param table_code string. A valid code for a table on data.cso.ie .
-#' @param cache_data logical. Whether to use cached data, if available.
+#' @param cache logical. Whether to use cached data, if available.
 #' Default value is TRUE.
+#' @param flush_cache logical. If TRUE (default) the cache will be checked for old, unused
+#' files. Any files which have not been accessed in the last month will be deleted
 #' @return character vector. The names of the statistics included in the
 #' table, with one element for each statistic.
 #' @export
 #' @examples
-#' cso_get_content("EP008")
-cso_get_content <- function(table_code, cache_data = TRUE) {
+#' \dontrun{
+#' var_cont <- cso_get_content("EP008")
+#' }
+cso_get_content <- function(table_code, cache = TRUE, flush_cache = TRUE) {
   # Pull the list from API and keep only useful column -----
-  tbl <- cso_download_tbl(table_code, cache_data)
+  tbl <- cso_download_tbl(table_code, cache, flush_cache)
   # Error Checking ----------------------
   if (is.null(tbl)) {
     return(NULL)
@@ -192,7 +207,7 @@ cso_get_content <- function(table_code, cache_data = TRUE) {
 #' cso_disp_meta("EP001")
 #' }
 cso_disp_meta <- function(table_code) {
-  meta <- cso_get_meta(table_code)
+  meta <- cso_get_meta(table_code, flush_cache = FALSE)
   
   # Error Checking ----------------------
   if (is.null(meta)) {

@@ -10,7 +10,8 @@ cso_get_data(
   include_ids = FALSE,
   id_list = NULL,
   use_factors = TRUE,
-  cache = TRUE
+  cache = TRUE,
+  flush_cache = TRUE
 )
 }
 \arguments{
@@ -43,6 +44,10 @@ strings.}
 R.cache. The raw data downloaded from the data.csi.ie is cached, which means
 that calling \code{cso_get_data} with the same table_code but different
 parameterswill result in cached data being used.}
+
+\item{flush_cache}{logical. If TRUE (default) the cache will be checked for 
+old, unused files. Any files which have not been accessed in the last month
+ will be deleted}
 }
 \value{
 data frame of the requested CSO table.
