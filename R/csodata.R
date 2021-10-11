@@ -38,16 +38,18 @@ NULL
 #' Deletes all data cached by the csodata package. The cached data from the
 #' csodata package is stored in a subdirectory of the default R.cache cache
 #' at R.cache::getCachePath(). This function provides a quick way to delete
-#' those files and free up space.
+#' those files along with the directory to free up space.
 #'
-#' This brings up a [Y/N] prompt with the number of files and directories
-#' that will be deleted, asking the user to confirm their intent.
 #'
+#' @return Does not return a value, deletes the csodata cache.
 #' @export
 #' @examples
 #' \dontrun{
 #' cso_clear_cache()
 #' }
 cso_clear_cache <- function() {
-  R.cache::clearCache(dirs = "csodata", recursive = TRUE)
+  R.cache::clearCache(dirs = "csodata", recursive = TRUE, prompt = FALSE)
+  unlink(paste0(R.cache::getCacheRootPath(),"/csodata"), recursive = TRUE, force = TRUE)
 }
+
+

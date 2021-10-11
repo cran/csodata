@@ -6,6 +6,9 @@
 \usage{
 cso_clear_cache()
 }
+\value{
+Does not return a value, produces a [Y/N] prompt to clear the cache.
+}
 \description{
 Deletes all data cached by the csodata package. The cached data from the
 csodata package is stored in a subdirectory of the default R.cache cache

@@ -3,14 +3,25 @@ csodata
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2020-03-11 11:34:03
+    #> Last Update: 2021-07-05 
 
 # Planned Updates
 
-  - Add support for new API to be introduced when upgrade occurs from
-    StatBank to Px-Stat.
+  - Continue to implement PxStat features
 
 # Version History
+
+## v1.2.1
+
+  - Minor bugfix in cso\_download\_tbl.
+
+## v1.2.0
+
+  - Implementing the active managment of saved tables in the cache.
+
+## v1.1.0
+
+  - Now using PxStat API as the data resource.
 
 ## v1.0.2
 

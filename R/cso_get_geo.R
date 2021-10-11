@@ -90,9 +90,9 @@ cso_get_geo <- function(map_data, cache = TRUE, flush_cache = TRUE) {
   if(flush_cache){
     file.remove(
       rownames(
-        fileSnapshot(paste0(R.cache::getCachePath(),"/csodata"), full.names = T, recursive = T)$info[!lubridate::`%within%`(
-          fileSnapshot(paste0(R.cache::getCachePath(),"/csodata"), full.names = T, recursive = T)$info[,"atime"],
-          lubridate::interval(start = Sys.Date()- months(1) , end = Sys.Date() + lubridate::days(1))) , ]
+        fileSnapshot(paste0(R.cache::getCacheRootPath(),"/csodata"), full.names = T, recursive = T)$info[!lubridate::`%within%`(
+          fileSnapshot(paste0(R.cache::getCacheRootPath(),"/csodata"), full.names = T, recursive = T)$info[,"mtime"],
+          lubridate::interval(start = Sys.Date()- lubridate::days(2) , end = Sys.Date() + lubridate::days(1))) , ]
       )
     )
   }
@@ -178,6 +178,7 @@ cso_get_geo_meta <- function(shp) {
 #' information about it to the console as formatted text.
 #'
 #' @param shp sf data.frame. Geographic data stored as an sf object.
+#' @return Does not return any values, rather the function prints the shapefile metadata to console.
 #' @export
 #' @examples
 #' \dontrun{

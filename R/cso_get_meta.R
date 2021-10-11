@@ -201,6 +201,7 @@ cso_get_content <- function(table_code, cache = TRUE, flush_cache = TRUE) {
 #' console as formatted text.
 #'
 #' @param table_code string. A valid code for a table on data.cso.ie .
+#' @return Does not return any values, rather the function prints the tables metadata to console.
 #' @export
 #' @examples
 #' \dontrun{

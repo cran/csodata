@@ -9,6 +9,9 @@ cso_disp_meta(table_code)
 \arguments{
 \item{table_code}{string. A valid code for a table on data.cso.ie .}
 }
+\value{
+Does not return any values, rather the function prints the tables metadata to console.
+}
 \description{
 Takes the output from \code{\link{cso_get_meta}} and prints it to the
 console as formatted text.

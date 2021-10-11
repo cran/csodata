@@ -53,7 +53,7 @@ cso_get_data <- function(table_code, wide_format = "wide", include_ids = FALSE,
       stop("Not a valid path to a .json file")
     }
   } else {
-    json_data <- cso_download_tbl(table_code, cache = cache, flush_cache)
+    json_data <- cso_download_tbl(table_code, cache = cache, flush_cache = flush_cache)
     # Error Checking ----------------------
     if (is.null(json_data)) {
       return(NULL)
@@ -167,12 +167,12 @@ cso_download_tbl <- function(table_code, cache = TRUE,
   if(flush_cache){
     file.remove(
       rownames(
-        fileSnapshot(paste0(R.cache::getCachePath(),"/csodata"), full.names = T, recursive = T)$info[!lubridate::`%within%`(
-          fileSnapshot(paste0(R.cache::getCachePath(),"/csodata"), full.names = T, recursive = T)$info[,"atime"],
-          lubridate::interval(start = lubridate::`%m+%`(Sys.Date(),months(-1)) , end = Sys.Date() + lubridate::days(1))) , ]
+        fileSnapshot(paste0(R.cache::getCacheRootPath(),"/csodata"), full.names = T, recursive = T)$info[!lubridate::`%within%`(
+          fileSnapshot(paste0(R.cache::getCacheRootPath(),"/csodata"), full.names = T, recursive = T)$info[,"mtime"],
+          lubridate::interval(start = Sys.Date() - lubridate::days(2) , end = Sys.Date() + lubridate::days(1))) , ]
       )
     )
-  }
+  } 
   
   
   # No caching, or cache empty ----------

@@ -56,10 +56,10 @@
     if(flush_cache){
       file.remove(
         rownames(
-          fileSnapshot(paste0(R.cache::getCachePath(),"/csodata"), full.names = T, recursive = T)$info[!lubridate::`%within%`(
-            fileSnapshot(paste0(R.cache::getCachePath(),"/csodata"), full.names = T, recursive = T)$info[,"atime"],
-            lubridate::interval(start = lubridate::`%m+%`(Sys.Date(),months(-1)) , end = Sys.Date() + lubridate::days(1) )) , ]
-        )
+          fileSnapshot(paste0(R.cache::getCacheRootPath(),"/csodata"), full.names = T, recursive = T)$info[!lubridate::`%within%`(
+            fileSnapshot(paste0(R.cache::getCacheRootPath(),"/csodata"), full.names = T, recursive = T)$info[,"mtime"],
+            lubridate::interval(start = Sys.Date() - lubridate::days(2) , end = Sys.Date() + lubridate::days(1) )) , ]
+        ) #lubridate::`%m+%`(Sys.Date(),months(-1)) 
       )
     }
     

@@ -9,6 +9,9 @@ cso_disp_geo_meta(shp)
 \arguments{
 \item{shp}{sf data.frame. Geographic data stored as an sf object.}
 }
+\value{
+Does not return any values, rather the function prints the shapefile metadata to console.
+}
 \description{
 Takes the output from \code{\link{cso_get_geo}} or otherwise and prints
 information about it to the console as formatted text.
