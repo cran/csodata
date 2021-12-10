@@ -1,8 +1,8 @@
-ad92475b1eeee421f34b7fe2a7d80d77 *DESCRIPTION
+ce53e7f45db915e062b2818dc5d9be26 *DESCRIPTION
 978b8ef4027356c0abb6a18625767eb8 *NAMESPACE
 44f960f4b5b8d0355640e16f17b3b0cb *NEWS.md
 7086d5eb04e7fc472c87014a589be38e *R/cso_get_data.R
-2d8a21c11b6fe9186a5f972d059b4fd2 *R/cso_get_geo.R
+52a16e9ea8949a1897dfd047e8e02354 *R/cso_get_geo.R
 0a2d1d8425ea32b09ca2b9bd47161e5f *R/cso_get_meta.R
 b7ef9ce10fdfad5392870aa7a77f3ed2 *R/cso_get_toc.R
 6fff1843bdc6af1aed600065a7c78933 *R/csodata.R
@@ -10,8 +10,8 @@ b7ef9ce10fdfad5392870aa7a77f3ed2 *R/cso_get_toc.R
 18507ee4b13cbf47ac9a63a9b1004b2e *build/vignette.rds
 894b6c9367ee0ed63d649c0d07077024 *inst/doc/quick_start_guide.R
 7c79eed083f33c54f02ef8733902ee97 *inst/doc/quick_start_guide.Rmd
-79fe78cd3ff38bdf31a7d7d5b2b0037b *inst/doc/quick_start_guide.html
-6ec5515326dd9121c996f4b3e450704f *man/cso_clear_cache.Rd
+5ca731dd98812985b03eb45d64c3d191 *inst/doc/quick_start_guide.html
+05e5b9e10322c43608854a47092b5062 *man/cso_clear_cache.Rd
 38e2475d963d52c33b4c93f0fbe958f5 *man/cso_disp_geo_meta.Rd
 28ee72558599fe83de7a245fccf936d0 *man/cso_disp_meta.Rd
 002aa14ff12912178a908daa796de7b0 *man/cso_get_content.Rd

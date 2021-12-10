@@ -42,7 +42,7 @@
 #' }
 
 cso_get_geo <- function(map_data, cache = TRUE, flush_cache = TRUE) {
-  dl_path <- "http://census.cso.ie/censusasp/saps/boundaries/"
+  dl_path <- "https://census.cso.ie/censusasp/saps/boundaries/"
   # Set shapefile name ------------------
   fname <- dplyr::case_when(
     map_data == "Provinces" || map_data == "p" ~
@@ -101,6 +101,7 @@ cso_get_geo <- function(map_data, cache = TRUE, flush_cache = TRUE) {
   tmpdir <- tempdir()
   filepath <- paste0(tmpdir, "/", fname, ".zip")
   
+  # Error Messaging --------
   error_message =  paste0("Failed retrieving map data. Please check internet",
                           " connection and that cso.ie and opendata.arcgis.com are online")
   if (httr::http_error(url)) {

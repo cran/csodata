@@ -7,17 +7,13 @@
 cso_clear_cache()
 }
 \value{
-Does not return a value, produces a [Y/N] prompt to clear the cache.
+Does not return a value, deletes the csodata cache.
 }
 \description{
 Deletes all data cached by the csodata package. The cached data from the
 csodata package is stored in a subdirectory of the default R.cache cache
 at R.cache::getCachePath(). This function provides a quick way to delete
-those files and free up space.
-}
-\details{
-This brings up a [Y/N] prompt with the number of files and directories
-that will be deleted, asking the user to confirm their intent.
+those files along with the directory to free up space.
 }
 \examples{
 \dontrun{
