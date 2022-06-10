@@ -101,38 +101,86 @@ cso_get_geo <- function(map_data, cache = TRUE, flush_cache = TRUE) {
   tmpdir <- tempdir()
   filepath <- paste0(tmpdir, "/", fname, ".zip")
   
+  
   # Error Messaging --------
   error_message =  paste0("Failed retrieving map data. Please check internet",
                           " connection and that cso.ie and opendata.arcgis.com are online")
-  if (httr::http_error(url)) {
-    print(paste0("Error: ", error_message))
-    return(NULL)
-  } else {
+  endfunc <- FALSE
+  tryCatch({
     utils::download.file(url, filepath)
+  }, warning = function(w) {
+    message(paste0("Warning: ", error_message))
+    endfunc <<- TRUE
+    return(NULL)
+  }, error = function(e) {
+    message(paste0("Connection Error: ", error_message))
+    endfunc <<- TRUE
+    return(NULL)
+  })
+  
+  if(!endfunc){
+    tryCatch({
+      utils::unzip(filepath, exdir = tmpdir)
+    }, warning = function(w) {
+      message(paste0("Warning: ", error_message))
+      endfunc <<- TRUE
+      return(NULL)
+    }, error = function(e) {
+      message(paste0("Connection Error: ", error_message))
+      endfunc <<- TRUE
+      return(NULL)
+    })
   }
   
-  utils::unzip(filepath, exdir = tmpdir)
-  if (map_data == "NUTS2") {
-    shape_file <- paste0(tmpdir, "/", "c2f2dbb3-289e-45cc-ae79-791cbc9339632020330-1-1uh3380.g89t.shp")
-  } else if ( map_data == "NUTS3"){
-    shape_file <- paste0(tmpdir, "/", "527c3332-32cc-44cd-baa3-267a0e917b5a2020328-1-1cpklcw.flb0h.shp")
-  } else{
-    shape_file <- paste0(tmpdir, "/", fname, ".shp")
+  if(!endfunc){
+    
+    
+    '
+  tryCatch({
+    utils::unzip(filepath, exdir = tmpdir)
+  }, warning = function(w) {
+    message(paste0("Warning: ", error_message))
+    return(NULL)
+  }, error = function(e) {
+    message(paste0("Connection Error: ", error_message))
+    return(NULL)
+  })
+  '
+    utils::unzip(filepath, exdir = tmpdir)
+    if (map_data == "NUTS2") {
+      shape_file <- paste0(tmpdir, "/", "c2f2dbb3-289e-45cc-ae79-791cbc9339632020330-1-1uh3380.g89t.shp")
+    } else if ( map_data == "NUTS3"){
+      shape_file <- paste0(tmpdir, "/", "527c3332-32cc-44cd-baa3-267a0e917b5a2020328-1-1cpklcw.flb0h.shp")
+    } else{
+      shape_file <- paste0(tmpdir, "/", fname, ".shp")
+    }
+    '
+  url <- "https://census.xcso.ie/censusasp/saps/boundaries/Census2011_NUTS3_generalised20m.zip"
+  filepath <- paste0(tmpdir, "\\", "zoo")
+  response <- tryCatch({
+    httr::GET(url)
+  }, warning = function(w) {
+    print(paste0("Warning: ", error_message))
+    return(NULL)
+  }, error = function(e) {
+    message(paste0("Connection Error: ", error_message))
+    return(NULL)
+  })
+  '
+    shp <- sf::st_read(shape_file, stringsAsFactors = F)
+    
+    
+    if (map_data == "NUTS2" | map_data == "NUTS3") {
+      # Transform OSi maps to use Irish grid projection, like CSO maps
+      ire_proj = "+proj=tmerc +lat_0=53.5 +lon_0=-8 +k=1.000035 +x_0=200000 +y_0=250000 +datum=ire65 +units=m +no_defs"
+      shp <- sf::st_transform(shp, ire_proj)
+    }
+    
+    if (cache) {
+      R.cache::saveCache(shp, key = list(fname), dirs = "csodata/geodata")
+    }
+    return(shp)
   }
-  
-  shp <- sf::st_read(shape_file, stringsAsFactors = F)
-  
-  
-  if (map_data == "NUTS2" | map_data == "NUTS3") {
-    # Transform OSi maps to use Irish grid projection, like CSO maps
-    ire_proj = "+proj=tmerc +lat_0=53.5 +lon_0=-8 +k=1.000035 +x_0=200000 +y_0=250000 +datum=ire65 +units=m +no_defs"
-    shp <- sf::st_transform(shp, ire_proj)
-  }
-  
-  if (cache) {
-    R.cache::saveCache(shp, key = list(fname), dirs = "csodata/geodata")
-  }
-  return(shp)
 }
 
 

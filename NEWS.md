@@ -10,7 +10,11 @@ csodata
   - Continue to implement PxStat features
 
 # Version History
+## v1.2.1
 
+  - Minor bugfix in cso\get\_geo.
+  
+  
 ## v1.2.1
 
   - Minor bugfix in cso\_download\_tbl.

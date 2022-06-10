@@ -22,17 +22,16 @@ meta1 <- cso_get_meta("CDP06")
 cso_disp_meta("CDP06")
 
 ## -----------------------------------------------------------------------------
-shp <- cso_get_geo("NUTS3_2011")
+shp <- cso_get_geo("NUTS2")
 
 ## ---- fig.width = 5, fig.height=6---------------------------------------------
 # install.packages("tmap")
 library(tmap)
-
 t <- tm_shape(shp) +
-       tm_fill(col="TOTAL2011", 
+        tm_fill(col="Shape__Are", 
                     palette = viridisLite::viridis(20),
                     style="cont", legend.reverse = TRUE,
-                    title = "Population 2011") +
+                    title = "Area in Sq Meters") +
        tm_borders(col = "black") +
        tm_layout(frame = FALSE, scale = 1.3)
 t

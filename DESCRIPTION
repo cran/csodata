@@ -1,8 +1,8 @@
 Package: csodata
 Type: Package
 Title: Download Data from the CSO 'PxStat' API
-Version: 1.2.2
-Date: 2021-12-10
+Version: 1.2.3
+Date: 2022-06-09
 Authors@R: c(
     person("Eoin", "Horgan", email = "eoin.horgan@cso.ie", role = "aut", comment = c(ORCID = "0000-0002-3446-6154")),
 	person("Conor", "Crowley", email = "conor.crowley@cso.ie", role = c("aut", "cre")),
@@ -25,10 +25,10 @@ RoxygenNote: 7.1.1
 Suggests: knitr, rmarkdown, tmap, viridisLite
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2021-12-10 14:06:24 UTC; crowleyco
+Packaged: 2022-06-10 09:45:44 UTC; crowleyco
 Author: Eoin Horgan [aut] (<https://orcid.org/0000-0002-3446-6154>),
   Conor Crowley [aut, cre],
   Vytas Vaiciulis [aut],
   Mervyn O'Luing [aut]
 Repository: CRAN
-Date/Publication: 2021-12-10 15:00:05 UTC
+Date/Publication: 2022-06-10 15:40:02 UTC
