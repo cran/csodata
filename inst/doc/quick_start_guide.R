@@ -17,24 +17,24 @@ head(toc)
 ## -----------------------------------------------------------------------------
 tbl1 <- cso_get_data("PEA19")
 
-## -----------------------------------------------------------------------------
+## ---- eval =  !is.null(tbl1)--------------------------------------------------
 meta1 <- cso_get_meta("CDP06")
 cso_disp_meta("CDP06")
 
 ## -----------------------------------------------------------------------------
-shp <- cso_get_geo("NUTS2")
+shp <- cso_get_geo("County Councils")
 
-## ---- fig.width = 5, fig.height=6---------------------------------------------
-# install.packages("tmap")
-library(tmap)
-t <- tm_shape(shp) +
-        tm_fill(col="Shape__Are", 
-                    palette = viridisLite::viridis(20),
-                    style="cont", legend.reverse = TRUE,
-                    title = "Area in Sq Meters") +
-       tm_borders(col = "black") +
-       tm_layout(frame = FALSE, scale = 1.3)
-t
+
+## ---- fig.width = 5, fig.height=6, eval= !is.null(shp)------------------------
+
+# install.packages("leaflet")
+library(leaflet)
+
+
+leaflet(shp) %>% 
+  addTiles() %>% 
+  addPolygons()
+
 
 ## -----------------------------------------------------------------------------
 cso_clear_cache()
