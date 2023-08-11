@@ -16,6 +16,10 @@ editor_options:
 
 # Version History
 
+## v1.4.2
+
+- Fixed an issue with pivot_format = "tidy"
+
 ## v1.4.1
 
 -   Fixed issue where passing from_date = NULL would cause an error in

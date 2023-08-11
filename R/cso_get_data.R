@@ -122,7 +122,6 @@ cso_get_data <- function(table_code,pivot_format = "wide", wide_format = lifecyc
     }
   }
   
-  
   #Pivot to Tidy Data
   if (pivot_format == "tidy"){
     
@@ -134,7 +133,7 @@ cso_get_data <- function(table_code,pivot_format = "wide", wide_format = lifecyc
       data <- dplyr::rename(data, Value = value)
     }
     
-    data <- tidyr::pivot_wider(data, names_from = Statistic ,values_from = value)
+    data <- tidyr::pivot_wider(data, names_from = Statistic ,values_from = Value)
     
   }
   
