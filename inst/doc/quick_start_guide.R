@@ -1,4 +1,4 @@
-## ---- include = FALSE---------------------------------------------------------
+## ----include = FALSE----------------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
@@ -24,7 +24,7 @@ cso_disp_meta("CDP06")
 ## -----------------------------------------------------------------------------
 shp <- cso_get_geo("County Councils")
 
-## ---- fig.width = 5, fig.height=6, eval= !is.null(shp)------------------------
+## ----fig.width = 5, fig.height=6, eval= !is.null(shp)-------------------------
 # install.packages("leaflet")
 library(leaflet)
 
